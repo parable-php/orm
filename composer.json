@@ -1,0 +1,34 @@
+{
+  "name": "parable-php/orm",
+  "type": "library",
+  "description": "Parable ORM is a small but complete repository-pattern ORM implementation",
+  "keywords": ["library", "micro", "orm", "database", "parable"],
+  "homepage": "https://github.com/parable-php/orm",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Robin de Graaf",
+      "email": "hello@devvoh.com",
+      "homepage": "https://devvoh.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "ext-pdo": "*",
+    "parable-php/di": "^0.2.0",
+    "parable-php/query": "^0.1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Parable\\Orm\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Parable\\Orm\\Tests\\": "tests"
+    }
+  }
+}
