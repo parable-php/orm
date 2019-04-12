@@ -1,5 +1,11 @@
 # Parable PHP ORM
 
+## 0.1.2
+
+_Changes_
+- Renamed `Traits` directory to `Features` since they haven't been traits for a while.
+- Removed `getCreatedAt()` and `getUpdatedAt()` from the `SupportsSomethingedAt` features, since Parable ORM doesn't require them and you should choose how to expose them.
+
 ## 0.1.1
 
 _Changes_
