@@ -4,8 +4,8 @@ namespace Parable\Orm\Tests\Classes;
 
 use DateTimeImmutable;
 use Parable\Orm\AbstractEntity;
-use Parable\Orm\Traits\SupportsCreatedAt;
-use Parable\Orm\Traits\SupportsUpdatedAt;
+use Parable\Orm\Features\SupportsCreatedAt;
+use Parable\Orm\Features\SupportsUpdatedAt;
 
 class TestEntityWithoutPrimaryKey extends AbstractEntity implements SupportsCreatedAt, SupportsUpdatedAt
 {

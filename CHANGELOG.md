@@ -1,5 +1,9 @@
 # Parable PHP ORM
 
+## 0.2.0
+
+Same as 0.1.2 but now without breaking changes in a major pre-release version.
+
 ## 0.1.3
 
 _Changes_
