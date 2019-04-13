@@ -5,8 +5,8 @@ namespace Parable\Orm\Tests\Classes;
 use DateTimeImmutable;
 use Parable\Orm\AbstractEntity;
 use Parable\Orm\Database;
-use Parable\Orm\Features\SupportsCreatedAt;
-use Parable\Orm\Features\SupportsUpdatedAt;
+use Parable\Orm\Traits\SupportsCreatedAt;
+use Parable\Orm\Traits\SupportsUpdatedAt;
 
 class TestEntityWithMissingSetters extends AbstractEntity implements SupportsCreatedAt, SupportsUpdatedAt
 {

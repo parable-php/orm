@@ -3,8 +3,8 @@
 namespace Parable\Orm;
 
 use Parable\Di\Container;
-use Parable\Orm\Features\SupportsCreatedAt;
-use Parable\Orm\Features\SupportsUpdatedAt;
+use Parable\Orm\Traits\SupportsCreatedAt;
+use Parable\Orm\Traits\SupportsUpdatedAt;
 use Parable\Query\Builder;
 use Parable\Query\Query;
 

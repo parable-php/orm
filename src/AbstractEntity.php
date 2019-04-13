@@ -2,6 +2,10 @@
 
 namespace Parable\Orm;
 
+use DateTimeImmutable;
+use Parable\Orm\Traits\SupportsCreatedAt;
+use Parable\Orm\Traits\SupportsUpdatedAt;
+
 abstract class AbstractEntity
 {
     /**
@@ -130,7 +134,8 @@ abstract class AbstractEntity
         $array = $this->toArray();
 
         foreach ($array as $key => $value) {
-            if (array_key_exists($key, $this->originalProperties)
+            if (
+                array_key_exists($key, $this->originalProperties)
                 && $this->originalProperties[$key] === $value
             ) {
                 unset($array[$key]);
