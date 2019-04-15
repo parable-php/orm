@@ -184,6 +184,20 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $this->repository->save($user);
 
         /** @var TestEntity[] $users */
+        $users = $this->repository->findAll(Query::ORDER_ASC);
+
+        self::assertCount(2, $users);
+
+        self::assertSame(
+            'Default User',
+            $users[0]->getName()
+        );
+        self::assertSame(
+            'First Custom User',
+            $users[1]->getName()
+        );
+
+        /** @var TestEntity[] $users */
         $users = $this->repository->findAll(Query::ORDER_DESC);
 
         self::assertCount(2, $users);
@@ -276,6 +290,51 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
             'First Custom User',
             $users[0]->getName()
         );
+    }
+
+    public function testFindUniqueByReturnsNullIfNoneFound()
+    {
+        /** @var TestEntity[] $users */
+        $user = $this->repository->findUniqueBy(function (Query $query) {
+            $query->where('name', '=', 'Unique name');
+        });
+
+        self::assertNull($user);
+    }
+
+    public function testFindUniqueByReturnsAbstractEntity()
+    {
+        $user = new TestEntity();
+        $user->setName('Unique name');
+
+        $this->repository->save($user);
+
+        /** @var TestEntity $user */
+        $user = $this->repository->findUniqueBy(function (Query $query) {
+            $query->where('name', '=', 'Unique name');
+        });
+
+        self::assertInstanceOf(TestEntity::class, $user);
+        self::assertSame('Unique name', $user->getName());
+    }
+
+    public function testFindUniqueByThrowsOnMoreThanOneResult()
+    {
+        self::expectException(Exception::class);
+        self::expectExceptionMessage("Found more than one of");
+
+        $user1 = new TestEntity();
+        $user1->setName('Unique name');
+
+        $user2 = new TestEntity();
+        $user2->setName('Unique name');
+
+        $this->repository->saveAll($user1, $user2);
+
+        /** @var TestEntity[] $users */
+        $this->repository->findUniqueBy(function (Query $query) {
+            $query->where('name', '=', 'Unique name');
+        });
     }
 
     public function testCountBy()

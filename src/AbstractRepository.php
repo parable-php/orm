@@ -56,9 +56,6 @@ abstract class AbstractRepository
 
     abstract public function getPrimaryKey(): string;
 
-    /**
-     * @return string|AbstractEntity
-     */
     abstract public function getEntityClass(): string;
 
     public function createEntityClass(): AbstractEntity
@@ -127,6 +124,25 @@ abstract class AbstractRepository
         $item = reset($result);
 
         return $this->createEntityFromArrayItem($item);
+    }
+
+    public function findUniqueBy(
+        callable $callable
+    ): ?AbstractEntity {
+        $entities = $this->findBy($callable);
+
+        if (count($entities) > 1) {
+            throw new Exception(sprintf(
+                "Found more than one of '%s'",
+                $this->getEntityClass()
+            ));
+        }
+
+        if (count($entities) === 0) {
+            return null;
+        }
+
+        return $entities[0];
     }
 
     /**

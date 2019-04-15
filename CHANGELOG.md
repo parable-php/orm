@@ -1,5 +1,11 @@
 # Parable PHP ORM
 
+## 0.2.1
+
+_Changes_
+- Entities will no longer attempt to set values on new instances that are already `null`. This makes it possible to more strictly type setters.
+- Repositories gained a method: `findUniqueBy($callable): AbstractEntity`. It returns null on 0, the entity on 1 and throws on 1+.
+
 ## 0.2.0
 
 Same as 0.1.2 but now without breaking changes in a major pre-release version.

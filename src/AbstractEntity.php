@@ -74,7 +74,9 @@ abstract class AbstractEntity
                 ));
             }
 
-            $entity->{$setter}($value);
+            if ($value !== null) {
+                $entity->{$setter}($value);
+            }
         }
 
         $entity->markAsOriginal();
