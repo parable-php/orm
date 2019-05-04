@@ -10,6 +10,8 @@ use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestEntityWithoutTraits;
 use Parable\Orm\Tests\Classes\TestRepository;
 use Parable\Orm\Tests\Classes\TestRepositoryWithoutPrimaryKey;
+use Parable\Query\Order;
+use Parable\Query\OrderBy;
 use Parable\Query\Query;
 use stdClass;
 
@@ -184,7 +186,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $this->repository->save($user);
 
         /** @var TestEntity[] $users */
-        $users = $this->repository->findAll(Query::ORDER_ASC);
+        $users = $this->repository->findAll(OrderBy::asc('id'));
 
         self::assertCount(2, $users);
 
@@ -198,7 +200,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
 
         /** @var TestEntity[] $users */
-        $users = $this->repository->findAll(Query::ORDER_DESC);
+        $users = $this->repository->findAll(OrderBy::desc('id'));
 
         self::assertCount(2, $users);
 
@@ -220,7 +222,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $this->repository->save($user);
 
         /** @var TestEntity[] $users */
-        $users = $this->repository->findAll(Query::ORDER_ASC, 1);
+        $users = $this->repository->findAll(OrderBy::asc('id'), 1);
 
         self::assertCount(1, $users);
 
@@ -241,7 +243,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $this->repository->saveAll($user1, $user2);
 
         /** @var TestEntity[] $users */
-        $users = $this->repository->findAll(Query::ORDER_ASC, 1, 1);
+        $users = $this->repository->findAll(OrderBy::asc('id'), 1, 1);
 
         self::assertCount(1, $users);
 
@@ -251,7 +253,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFindAllWithOrderLimitAndOffset()
+    public function testFindAllWithOrderDescendingLimitAndOffset()
     {
         $user1 = new TestEntity();
         $user1->setName('First Custom User');
@@ -262,7 +264,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $this->repository->saveAll($user1, $user2);
 
         /** @var TestEntity[] $users */
-        $users = $this->repository->findAll(Query::ORDER_DESC, 2, 1);
+        $users = $this->repository->findAll(OrderBy::desc('id'), 2, 1);
 
         self::assertCount(1, $users);
 

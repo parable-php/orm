@@ -1,5 +1,13 @@
 # Parable PHP ORM
 
+## 0.3.0
+
+_Changes_
+
+- Updated to `parable-php/query` 0.2.1, which offers `OrderBy::asc(...$keys)` and `OrderBy::desc(...$keys)`, rather than using strings.
+
+  Example usage: `$repository->findAll(OrderBy::asc('id');`.
+
 ## 0.2.1
 
 _Changes_

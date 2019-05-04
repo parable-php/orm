@@ -6,6 +6,7 @@ use Parable\Di\Container;
 use Parable\Orm\Features\SupportsCreatedAt;
 use Parable\Orm\Features\SupportsUpdatedAt;
 use Parable\Query\Builder;
+use Parable\Query\OrderBy;
 use Parable\Query\Query;
 
 abstract class AbstractRepository
@@ -56,6 +57,9 @@ abstract class AbstractRepository
 
     abstract public function getPrimaryKey(): string;
 
+    /**
+     * @return string|AbstractEntity
+     */
     abstract public function getEntityClass(): string;
 
     public function createEntityClass(): AbstractEntity
@@ -79,13 +83,16 @@ abstract class AbstractRepository
      * @return AbstractEntity[]
      */
     public function findAll(
-        string $order = Query::ORDER_ASC,
+        OrderBy $orderBy = null,
         int $limit = 0,
         int $offset = 0
     ): array {
         $query = Query::select($this->getTableName());
-        $query->orderBy($this->getPrimaryKey(), $order);
         $query->limit($limit, $offset);
+
+        if ($orderBy !== null) {
+            $query->orderBy($orderBy);
+        }
 
         $entities = [];
 
@@ -99,7 +106,7 @@ abstract class AbstractRepository
     public function countAll(): int
     {
         $query = Query::select($this->getTableName());
-        $query->setColumns(['COUNT(1)']);
+        $query->setColumns('COUNT(1)');
 
         $result = $this->database->query($this->builder->build($query));
 
@@ -150,14 +157,17 @@ abstract class AbstractRepository
      */
     public function findBy(
         callable $callable,
-        string $order = Query::ORDER_ASC,
+        Order $order = null,
         int $limit = 0,
         int $offset = 0
     ): array {
         $query = Query::select($this->getTableName());
         $query->whereCallable($callable);
-        $query->orderBy($this->getPrimaryKey(), $order);
         $query->limit($limit, $offset);
+
+        if ($order !== null) {
+            $query->orderBy($order);
+        }
 
         $result = $this->database->query($this->builder->build($query));
 
@@ -174,7 +184,7 @@ abstract class AbstractRepository
         callable $callable
     ): int {
         $query = Query::select($this->getTableName());
-        $query->setColumns(['COUNT(1)']);
+        $query->setColumns('COUNT(1)');
         $query->whereCallable($callable);
 
         $result = $this->database->query($this->builder->build($query));
@@ -186,7 +196,7 @@ abstract class AbstractRepository
     {
         $query = $this->createSaveQueryForEntity($entity);
 
-        if (!$query->hasValueSets()) {
+        if ($query->countValueSets() === 0) {
             return $entity;
         }
 
@@ -246,7 +256,7 @@ abstract class AbstractRepository
             $insertQuery->addValueSet($valueSet);
         }
 
-        if ($insertQuery->hasValueSets()) {
+        if ($insertQuery->countValueSets() > 0) {
             $this->database->query($this->builder->build($insertQuery));
         }
 

@@ -5,5 +5,6 @@ namespace Parable\Orm\Features;
 interface SupportsUpdatedAt
 {
     public function setUpdatedAt(string $updatedAt): void;
+
     public function markUpdatedAt(): void;
 }
