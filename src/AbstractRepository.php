@@ -157,7 +157,7 @@ abstract class AbstractRepository
      */
     public function findBy(
         callable $callable,
-        Order $order = null,
+        OrderBy $order = null,
         int $limit = 0,
         int $offset = 0
     ): array {

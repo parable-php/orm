@@ -294,6 +294,29 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testFindByWithOrder()
+    {
+        $user1 = new TestEntity();
+        $user1->setName('First Custom User');
+
+        $user2 = new TestEntity();
+        $user2->setName('Second Custom User');
+
+        $this->repository->saveAll($user1, $user2);
+
+        /** @var TestEntity[] $users */
+        $users = $this->repository->findBy(function (Query $query) {
+            $query->where('name', 'LIKE', '%Custom%');
+        }, OrderBy::desc('id'));
+
+        self::assertCount(2, $users);
+
+        self::assertSame(
+            'Second Custom User',
+            $users[0]->getName()
+        );
+    }
+
     public function testFindUniqueByReturnsNullIfNoneFound()
     {
         /** @var TestEntity[] $users */
