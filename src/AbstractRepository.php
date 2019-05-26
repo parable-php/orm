@@ -113,9 +113,6 @@ abstract class AbstractRepository
         return (int)$result[0]['COUNT(1)'] ?? 0;
     }
 
-    /**
-     * @return AbstractEntity|null
-     */
     public function find(int $id): ?AbstractEntity
     {
         $query = Query::select($this->getTableName());
@@ -133,9 +130,8 @@ abstract class AbstractRepository
         return $this->createEntityFromArrayItem($item);
     }
 
-    public function findUniqueBy(
-        callable $callable
-    ): ?AbstractEntity {
+    public function findUniqueBy(callable $callable): ?AbstractEntity
+    {
         $entities = $this->findBy($callable);
 
         if (count($entities) > 1) {
@@ -196,7 +192,7 @@ abstract class AbstractRepository
     {
         $query = $this->createSaveQueryForEntity($entity);
 
-        if ($query->countValueSets() === 0) {
+        if (!$query->hasValueSets()) {
             return $entity;
         }
 
@@ -238,7 +234,6 @@ abstract class AbstractRepository
         $insertQuery = Query::insert($this->getTableName());
 
         foreach ($this->deferredSaveEntities as $entity) {
-            // Update queries are immediate
             if ($this->isEntityStored($entity)) {
                 $this->save($entity);
 
@@ -256,7 +251,7 @@ abstract class AbstractRepository
             $insertQuery->addValueSet($valueSet);
         }
 
-        if ($insertQuery->countValueSets() > 0) {
+        if ($insertQuery->hasValueSets()) {
             $this->database->query($this->builder->build($insertQuery));
         }
 

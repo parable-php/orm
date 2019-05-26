@@ -5,12 +5,10 @@ namespace Parable\Orm\Tests;
 use Parable\Di\Container;
 use Parable\Orm\Database;
 use Parable\Orm\Exception;
-use Parable\Orm\Tests\Classes\TestDatabase;
 use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestEntityWithoutTraits;
 use Parable\Orm\Tests\Classes\TestRepository;
 use Parable\Orm\Tests\Classes\TestRepositoryWithoutPrimaryKey;
-use Parable\Query\Order;
 use Parable\Query\OrderBy;
 use Parable\Query\Query;
 use stdClass;
@@ -23,7 +21,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
     protected $container;
 
     /**
-     * @var TestDatabase
+     * @var Database
      */
     protected $database;
 
@@ -43,7 +41,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
 
         $this->container = new Container();
 
-        $this->database = $this->container->get(TestDatabase::class);
+        $this->database = $this->container->get(Database::class);
         $this->container->store($this->database, Database::class);
 
         $this->database->setType(Database::TYPE_SQLITE);
@@ -66,7 +64,19 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
 
         $this->repository->save($this->defaultUser);
 
-        $this->database->resetQueryCount();
+        $this->resetQueryCount($this->database);
+    }
+
+    protected function resetQueryCount(Database $database): void
+    {
+        $resetter = new class extends Database {
+            public function __invoke(Database $database)
+            {
+                $database->queryCount = 0;
+            }
+        };
+
+        $resetter($database);
     }
 
     public function testCreateRepositorySuccessful()
@@ -512,7 +522,8 @@ public function testDeferSaveAllWithMultipleEntities()
 
     self::assertCount(1, $this->repository->findAll());
 
-    $this->database->resetQueryCount();
+    $this->resetQueryCount($this->database);
+
     self::assertSame(0, $this->database->getQueryCount());
 
     $this->repository->saveDeferred();

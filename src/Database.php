@@ -58,11 +58,6 @@ class Database
     protected $connection;
 
     /**
-     * @var bool
-     */
-    protected $softQuotingEnabled = false;
-
-    /**
      * @var int
      */
     protected $queryCount = 0;
@@ -81,9 +76,19 @@ class Database
         $this->type = $type;
     }
 
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
     public function setHost(string $host): void
     {
         $this->host = $host;
+    }
+
+    public function getHost(): ?string
+    {
+        return $this->host;
     }
 
     public function setPort(int $port): void
@@ -91,9 +96,19 @@ class Database
         $this->port = $port;
     }
 
+    public function getPort(): ?int
+    {
+        return $this->port;
+    }
+
     public function setUsername(string $username): void
     {
         $this->username = $username;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
     }
 
     public function setPassword(string $password): void
@@ -101,14 +116,29 @@ class Database
         $this->password = $password;
     }
 
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
     public function setDatabaseName(string $databaseName): void
     {
         $this->databaseName = $databaseName;
     }
 
+    public function getDatabaseName(): ?string
+    {
+        return $this->databaseName;
+    }
+
     public function setCharSet(string $charSet): void
     {
         $this->charSet = $charSet;
+    }
+
+    public function getCharSet(): ?string
+    {
+        return $this->charSet;
     }
 
     public function setErrorMode(int $errorMode): void
@@ -120,9 +150,9 @@ class Database
         $this->errorMode = $errorMode;
     }
 
-    public function enableSoftQuoting(): void
+    public function getErrorMode(): int
     {
-        $this->softQuotingEnabled = true;
+        return $this->errorMode;
     }
 
     public function isConnected(): bool
@@ -244,5 +274,21 @@ class Database
         $this->lastQuery = $query;
 
         return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Prevent leaking password through print_r/var_dump.
+     *
+     * NOTE: var_export will output everything always. Keep this in mind.
+     *
+     * @see \Parable\Orm\Tests\DatabaseTest::testDebugInfoCannotPreventVarExport
+     */
+    public function __debugInfo()
+    {
+        $clone = clone $this;
+
+        $clone->setPassword('****** (masked)');
+
+        return (array)$clone;
     }
 }
