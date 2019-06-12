@@ -89,6 +89,21 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertCount(1, $this->repository->findAll());
     }
 
+    public function testCreateRepositorySuccessfulWithoutDatabaseButFailsOnPerformingAnything()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Cannot use repository methods without database connection.");
+
+        $container = new Container();
+
+        $repository = $container->build(TestRepository::class);
+
+        self::assertInstanceOf(TestRepository::class, $repository);
+
+        // This should throw, since there's no active database.
+        $repository->findAll();
+    }
+
     public function testCreateEntityClass()
     {
         self::assertInstanceOf(TestEntity::class, $this->repository->createEntityClass());

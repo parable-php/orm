@@ -49,8 +49,6 @@ abstract class AbstractRepository
         $this->container = $container;
         $this->database = $database;
         $this->valueSetBuilder = $valueSetBuilder;
-
-        $this->builder = new Builder($database->getConnection());
     }
 
     abstract public function getTableName(): string;
@@ -96,7 +94,7 @@ abstract class AbstractRepository
 
         $entities = [];
 
-        foreach ($result = $this->database->query($this->builder->build($query)) as $item) {
+        foreach ($result = $this->database->query($this->getBuilder()->build($query)) as $item) {
             $entities[] = $this->createEntityFromArrayItem($item);
         }
 
@@ -108,7 +106,7 @@ abstract class AbstractRepository
         $query = Query::select($this->getTableName());
         $query->setColumns('COUNT(1)');
 
-        $result = $this->database->query($this->builder->build($query));
+        $result = $this->database->query($this->getBuilder()->build($query));
 
         return (int)$result[0]['COUNT(1)'] ?? 0;
     }
@@ -119,7 +117,7 @@ abstract class AbstractRepository
         $query->where($this->getPrimaryKey(), '=', $id);
         $query->limit(1);
 
-        $result = $this->database->query($this->builder->build($query));
+        $result = $this->database->query($this->getBuilder()->build($query));
 
         if (count($result) === 0) {
             return null;
@@ -165,7 +163,7 @@ abstract class AbstractRepository
             $query->orderBy($order);
         }
 
-        $result = $this->database->query($this->builder->build($query));
+        $result = $this->database->query($this->getBuilder()->build($query));
 
         $entities = [];
 
@@ -183,7 +181,7 @@ abstract class AbstractRepository
         $query->setColumns('COUNT(1)');
         $query->whereCallable($callable);
 
-        $result = $this->database->query($this->builder->build($query));
+        $result = $this->database->query($this->getBuilder()->build($query));
 
         return (int)$result[0]['COUNT(1)'] ?? 0;
     }
@@ -196,7 +194,7 @@ abstract class AbstractRepository
             return $entity;
         }
 
-        $this->database->query($this->builder->build($query));
+        $this->database->query($this->getBuilder()->build($query));
 
         if ($query->getType() === Query::TYPE_INSERT) {
             $key = $this->database->getConnection()->lastInsertId();
@@ -252,7 +250,7 @@ abstract class AbstractRepository
         }
 
         if ($insertQuery->hasValueSets()) {
-            $this->database->query($this->builder->build($insertQuery));
+            $this->database->query($this->getBuilder()->build($insertQuery));
         }
 
         $this->clearDeferredSaves();
@@ -291,6 +289,19 @@ abstract class AbstractRepository
         $this->deferredDeleteEntities = [];
     }
 
+    protected function getBuilder(): Builder
+    {
+        if (!$this->database->isConnected()) {
+            throw new Exception('Cannot use repository methods without database connection.');
+        }
+
+        if ($this->builder === null) {
+            $this->builder = new Builder($this->database->getConnection());
+        }
+
+        return $this->builder;
+    }
+
     protected function createSaveQueryForEntity(AbstractEntity $entity): Query
     {
         $this->validateEntityCorrectClass($entity);
@@ -324,7 +335,7 @@ abstract class AbstractRepository
         $query = Query::delete($this->getTableName());
         $query->where($this->getPrimaryKey(), 'IN', $primaryKeys);
 
-        $this->database->query($this->builder->build($query));
+        $this->database->query($this->getBuilder()->build($query));
     }
 
     protected function createEntityFromArrayItem(array $item): AbstractEntity

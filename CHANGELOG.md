@@ -1,5 +1,13 @@
 # Parable PHP ORM
 
+## 0.4.1
+
+_Changes_
+
+- `AbstractRepository` did not fail gracefully when instanced without a valid `Database` instance available in the DI Container. An active Database connection is not, however, required to _instantiate_ a repository. It is, however, to use it. Now instantiating is possible, but attempting to use the repository will fail.
+
+  See `testCreateRepositorySuccessfulWithoutDatabaseButFailsOnPerformingAnything` for specifics. Also, I'm super good at naming tests.
+
 ## 0.4.0
 
 _Changes_
