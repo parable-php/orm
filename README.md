@@ -42,6 +42,32 @@ class Entity extends AbstractEntity {
 
 As you can see, the entity itself doesn't really need much. The Repository set up for this entity type, however, will contain some metadata so it knows how to handle them.
 
+If you want to support automatic setting of a `created at` or `updated at` value, it's as simple as implementing either the `SupportsCreatedAt` or `SupportsUpdatedAt` interfaces. The repository will automatically pick up on it and attempt to call `markCreatedAt()` or `markUpdatedAt()`, leaving the specific property/column names up to you. Example:
+
+```php
+class Entity extends AbstractEntity implements SupportsCreatedAt {
+    protected $id;
+    protected $created_at;
+
+    public function getId() {
+        return $this->id;
+    }
+
+    public function getCreatedAt() {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt) {
+        $this->created_at = $createdAt->format(Database::DATETIME_SQL);
+    }
+
+    // Only this method is defined on the interface
+    public function markCreatedAt(): void {
+        $this->created_at = new DateTimeImmutable();
+    }
+}
+```
+
 Here's the Repository to handle the above Entity:
 
 ```php

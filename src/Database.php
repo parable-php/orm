@@ -8,7 +8,9 @@ use PDO;
 
 class Database
 {
-    public const DATETIME_SQL = 'Y-m-d H:i:s';
+    public const DATE_SQL = 'Y-m-d';
+    public const TIME_SQL = 'H:i:s';
+    public const DATETIME_SQL = self::DATE_SQL . ' ' . self::TIME_SQL;
 
     public const TYPE_MYSQL = 0;
     public const TYPE_SQLITE = 1;

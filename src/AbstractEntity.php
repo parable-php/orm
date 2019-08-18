@@ -32,9 +32,9 @@ abstract class AbstractEntity
 
         $entity->validatePrimaryKey($primaryKey);
 
-        $entity->{$primaryKey} = $values[$primaryKey] ?? null;
+        $entity->setPrimaryKey($primaryKey, $values[$primaryKey] ?? null);
 
-        if ($entity->{$primaryKey} === null) {
+        if ($entity->getPrimaryKey($primaryKey) === null) {
             throw new Exception(sprintf(
                 "Could not set primary key '%s' on Entity %s from values",
                 $primaryKey,
@@ -75,7 +75,9 @@ abstract class AbstractEntity
             }
 
             if ($value !== null) {
-                $entity->{$setter}($value);
+                $entity->{$setter}(
+                    TypeCaster::castStringToType($value)
+                );
             }
         }
 
