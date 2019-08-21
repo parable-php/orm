@@ -100,6 +100,12 @@ $repository->countAll(); // returns int
 $repository->find(23); // returns ?AbstractEntity
 ```
 
+#### How values are returned from the database
+
+Parable ORM includes `TypeCaster`, which attempts to cast values to the appropriate type. The default return type for it is `string`, but it also returns `DateTimeImmutable` values.
+
+Since it's impossible to automatically decide whether a numerical string was supposed to be a string or an int, these are also kept as `string` values.
+
 #### Condition-based repository use
 
 For advanced (and possibly complex) where conditions, we use a `callable` which is given a properly set up `Query` object. This allows for fine-grained control with a very low barrier to do so.

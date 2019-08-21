@@ -234,7 +234,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertSame("2", $result[0]['1+1']);
     }
 
-    public function testDebugInfoLeadsToNothing()
+    public function testDebugInfoLeadsToNothingForEitherPrintrOrVardump()
     {
         $database = new Database();
 

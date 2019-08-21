@@ -20,7 +20,7 @@ class TypeCasterTest extends \PHPUnit\Framework\TestCase
     {
         TypeCaster::enable();
 
-        self::assertIsInt(TypeCaster::castStringToType('1'));
+        self::assertInstanceOf(DateTimeImmutable::class, TypeCaster::castStringToType('2019-10-01'));
     }
 
     public function testDisabledTypeCasterCasts(): void
@@ -28,44 +28,6 @@ class TypeCasterTest extends \PHPUnit\Framework\TestCase
         TypeCaster::disable();
 
         self::assertIsString(TypeCaster::castStringToType('1'));
-    }
-
-    public function testIntegersAreCorrectlyInterpreted(): void
-    {
-        self::assertTrue(TypeCaster::isInteger('1'));
-
-        // And now things that are not integers
-        self::assertFalse(TypeCaster::isInteger('0b101'));
-        self::assertFalse(TypeCaster::isInteger('0756'));
-        self::assertFalse(TypeCaster::isInteger('1.0'));
-        self::assertFalse(TypeCaster::isInteger('totally a string'));
-        self::assertFalse(TypeCaster::isInteger('{"json":true}'));
-        self::assertFalse(TypeCaster::isInteger('2019-01-01'));
-        self::assertFalse(TypeCaster::isInteger('12:00:00'));
-        self::assertFalse(TypeCaster::isInteger('2019-01-01 12:00:00'));
-
-        self::assertSame(1, TypeCaster::castStringToType('1'));
-
-        // And these need to stay strings
-        self::assertSame('0756', TypeCaster::castStringToType('0756')); // binary
-        self::assertSame('0b101', TypeCaster::castStringToType('0b101')); // octal
-    }
-
-    public function testFloatsAreCorrectlyInterpreted(): void
-    {
-        self::assertTrue(TypeCaster::isFloat('1.0'));
-
-        // And now things that are not floats
-        self::assertFalse(TypeCaster::isFloat('1'));
-        self::assertFalse(TypeCaster::isFloat('0b101')); // binary
-        self::assertFalse(TypeCaster::isFloat('0756')); // octal
-        self::assertFalse(TypeCaster::isFloat('totally a string'));
-        self::assertFalse(TypeCaster::isFloat('{"json":true}'));
-        self::assertFalse(TypeCaster::isFloat('2019-01-01'));
-        self::assertFalse(TypeCaster::isFloat('12:00:00'));
-        self::assertFalse(TypeCaster::isFloat('2019-01-01 12:00:00'));
-
-        self::assertSame('1.0', TypeCaster::castStringToType('1.0'));
     }
 
     public function testDatesAreCorrectlyInterpreted(): void
@@ -135,9 +97,9 @@ class TypeCasterTest extends \PHPUnit\Framework\TestCase
         self::assertTrue(is_string(TypeCaster::castStringToType('1.0')));
         self::assertTrue(is_string(TypeCaster::castStringToType('totally a string')));
         self::assertTrue(is_string(TypeCaster::castStringToType('{"json":true}')));
+        self::assertTrue(is_string(TypeCaster::castStringToType('1')));
 
         // And now things that are not going to remain strings
-        self::assertFalse(is_string(TypeCaster::castStringToType('1')));
         self::assertFalse(is_string(TypeCaster::castStringToType('2019-01-01 12:00:00')));
         self::assertFalse(is_string(TypeCaster::castStringToType('2019-01-01')));
         self::assertFalse(is_string(TypeCaster::castStringToType('12:00:00')));

@@ -4,7 +4,7 @@
 
 _Major change_
 
-This update contains a rather major change. The `TypeCaster` has been added. This will guess to the best of its abilities what type a database-returned string value should actually be in PHP land and cast it appropriately. Because this is scary territory (rather than simply always returning strings), it's heavily under test.
+This update contains a handy change. The `TypeCaster` has been added. This will attempt to cast SQL-standard dates, times and datetimes to `DateTimeImmutable` objects, leaving everything else as `string`.
 
 See `TypeCasterTest` for the test cases. In case there are scenarios in which the parsing does not go correctly, please open an issue or PR to add the scenario to the test cases.
 

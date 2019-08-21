@@ -123,7 +123,8 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Traits class 'noooope' does not exist.");
 
         $repo = new class (...$this->container->getDependenciesFor(TestRepository::class)) extends TestRepository {
-            public function getEntityClass(): string {
+            public function getEntityClass(): string
+            {
                 return 'noooope';
             }
         };
@@ -137,7 +138,8 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Class 'stdClass' does not extend AbstractEntity.");
 
         $repo = new class (...$this->container->getDependenciesFor(TestRepository::class)) extends TestRepository {
-            public function getEntityClass(): string {
+            public function getEntityClass(): string
+            {
                 return stdClass::class;
             }
         };
