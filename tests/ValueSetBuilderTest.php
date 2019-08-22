@@ -2,6 +2,7 @@
 
 namespace Parable\Orm\Tests;
 
+use DateTimeImmutable;
 use Parable\Di\Container;
 use Parable\Orm\Database;
 use Parable\Orm\Exception;
@@ -115,7 +116,7 @@ class ValueSetBuilderTest extends \PHPUnit\Framework\TestCase
         $entity->setName('Hello Again');
 
         // The repository usually does this as part of save() by calling markUpdatedAt()
-        $now = date('Y-m-d h:i:s');
+        $now = new DateTimeImmutable();
         $entity->setUpdatedAt($now);
 
         $valueSet = $this->valueSetBuilder->build(
@@ -127,7 +128,7 @@ class ValueSetBuilderTest extends \PHPUnit\Framework\TestCase
         self::assertSame(
             [
                 'name' => 'Hello Again',
-                'updated_at' => $now
+                'updated_at' => $now->format(Database::DATETIME_SQL)
             ],
             $valueSet->getValues()
         );

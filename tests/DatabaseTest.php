@@ -234,7 +234,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertSame("2", $result[0]['1+1']);
     }
 
-    public function testDebugInfoLeadsToNothing()
+    public function testDebugInfoLeadsToNothingForPrintr()
     {
         $database = new Database();
 
@@ -243,15 +243,6 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
         self::assertNotContains('test_password', print_r($database, true));
         self::assertContains('****** (masked)', print_r($database, true));
-
-        ob_start();
-
-        var_dump($database);
-
-        $vardumpedContent = ob_get_clean();
-
-        self::assertNotContains('test_password', $vardumpedContent);
-        self::assertContains('****** (masked)', $vardumpedContent);
     }
 
     /**

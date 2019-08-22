@@ -48,9 +48,9 @@ class TestEntity extends AbstractEntity implements SupportsCreatedAt, SupportsUp
         return $this->name;
     }
 
-    public function setCreatedAt(string $createdAt): void
+    public function setCreatedAt(DateTimeImmutable $createdAt): void
     {
-        $this->created_at = $createdAt;
+        $this->created_at = $createdAt->format(Database::DATETIME_SQL);
     }
 
     public function getCreatedAt(): ?string
@@ -60,12 +60,12 @@ class TestEntity extends AbstractEntity implements SupportsCreatedAt, SupportsUp
 
     public function markCreatedAt(): void
     {
-        $this->created_at = (new DateTimeImmutable())->format(Database::DATETIME_SQL);
+        $this->setCreatedAt(new DateTimeImmutable());
     }
 
-    public function setUpdatedAt(?string $updatedAt): void
+    public function setUpdatedAt(?DateTimeImmutable $updatedAt): void
     {
-        $this->updated_at = $updatedAt;
+        $this->updated_at = $updatedAt->format(Database::DATETIME_SQL);
     }
 
     public function getUpdatedAt(): ?string
@@ -75,6 +75,6 @@ class TestEntity extends AbstractEntity implements SupportsCreatedAt, SupportsUp
 
     public function markUpdatedAt(): void
     {
-        $this->updated_at = (new DateTimeImmutable())->format(Database::DATETIME_SQL);
+        $this->setUpdatedAt(new DateTimeImmutable());
     }
 }

@@ -1,5 +1,19 @@
 # Parable PHP ORM
 
+## 0.5.0
+
+_Major change_
+
+This update contains a handy change. The `TypeCaster` has been added. This will attempt to cast SQL-standard dates, times and datetimes to `DateTimeImmutable` objects, leaving everything else as `string`.
+
+See `TypeCasterTest` for the test cases. In case there are scenarios in which the parsing does not go correctly, please open an issue or PR to add the scenario to the test cases.
+
+It's possible to disable the `TypeCaster` by calling `TypeCaster::disable()` before doing any database retrievals. Enabling it again can be done by calling `TypeCaster::enable()`.
+
+_Changes_
+- `Database::DATE_SQL` and `Database::TIME_SQL` have been added.
+- `setCreatedAt()` and `setUpdatedAt()` have been removed from the feature interfaces. This leaves only the mark methods left, and leaves the implementation up to you.
+
 ## 0.4.1
 
 _Changes_

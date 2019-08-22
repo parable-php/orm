@@ -26,21 +26,49 @@ class Entity extends AbstractEntity {
     protected $id;
     protected $name;
 
-    public function getId() {
-        return $this->id;
+    // We int cast because we know it is an int
+    public function getId(): int {
+        return (int)$this->id;
     }
 
     public function setName(string $name): void {
         $this->name = $name;
     }
 
-    public function getName(): string {
+    public function getName(): ?string {
         return $this->name;
     }
 }
 ```
 
 As you can see, the entity itself doesn't really need much. The Repository set up for this entity type, however, will contain some metadata so it knows how to handle them.
+
+If you want to support automatic setting of a `created at` or `updated at` value, it's as simple as implementing either the `SupportsCreatedAt` or `SupportsUpdatedAt` interfaces. The repository will automatically pick up on it and attempt to call `markCreatedAt()` or `markUpdatedAt()`, leaving the specific property/column names up to you. Example:
+
+```php
+class Entity extends AbstractEntity implements SupportsCreatedAt {
+    protected $id;
+    protected $created_at;
+
+    // We int cast because we know it is an int
+    public function getId(): int {
+        return (int)$this->id;
+    }
+
+    public function getCreatedAt(): ?DateTimeImmutable {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt): void {
+        $this->created_at = $createdAt->format(Database::DATETIME_SQL);
+    }
+
+    // Only this method is defined on the interface
+    public function markCreatedAt(): void {
+        $this->setCreatedAt(new DateTimeImmutable());
+    }
+}
+```
 
 Here's the Repository to handle the above Entity:
 
@@ -73,6 +101,14 @@ $repository->countAll(); // returns int
 ```php
 $repository->find(23); // returns ?AbstractEntity
 ```
+
+#### How values are returned from the database
+
+Parable ORM includes `TypeCaster`, which attempts to cast values to the appropriate type. The default return type for it is `string`, but it also returns `DateTimeImmutable` values. It can interpret standard format `DATETIME`, `DATE` and `TIME` fields.
+
+This means that any setter that has to do with a date, time or datetime value _must_ accept a `DateTimeImmutable` object, unless you call `TypeCaster::disable()` somewhere in your boot/plugin logic.
+
+Since it's impossible to automatically decide whether a numerical string was supposed to be a string or an int, these are also kept as `string` values.
 
 #### Condition-based repository use
 

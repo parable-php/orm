@@ -96,7 +96,10 @@ class EntityTest extends \PHPUnit\Framework\TestCase
     {
         $entity = new TestEntity();
 
-        self::assertNull($entity->validatePrimaryKey('id'));
+        // This would throw if incorrect
+        $entity->validatePrimaryKey('id');
+
+        self::expectNotToPerformAssertions();
     }
 
     public function testValidatePrivateKeyThrowsOnInvalidKey()
