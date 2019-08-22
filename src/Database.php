@@ -287,10 +287,11 @@ class Database
      */
     public function __debugInfo()
     {
-        $clone = clone $this;
-
-        $clone->setPassword('****** (masked)');
-
-        return (array)$clone;
+        die('stop in Database::__debugInfo');
+//        $clone = clone $this;
+//
+//        $clone->setPassword('****** (masked)');
+//
+//        return (array)$clone;
     }
 }
