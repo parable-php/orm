@@ -26,15 +26,16 @@ class Entity extends AbstractEntity {
     protected $id;
     protected $name;
 
-    public function getId() {
-        return $this->id;
+    // We int cast because we know it is an int
+    public function getId(): int {
+        return (int)$this->id;
     }
 
     public function setName(string $name): void {
         $this->name = $name;
     }
 
-    public function getName(): string {
+    public function getName(): ?string {
         return $this->name;
     }
 }
@@ -49,21 +50,22 @@ class Entity extends AbstractEntity implements SupportsCreatedAt {
     protected $id;
     protected $created_at;
 
-    public function getId() {
-        return $this->id;
+    // We int cast because we know it is an int
+    public function getId(): int {
+        return (int)$this->id;
     }
 
-    public function getCreatedAt() {
+    public function getCreatedAt(): ?DateTimeImmutable {
         return $this->created_at;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt) {
+    public function setCreatedAt(DateTimeImmutable $createdAt): void {
         $this->created_at = $createdAt->format(Database::DATETIME_SQL);
     }
 
     // Only this method is defined on the interface
     public function markCreatedAt(): void {
-        $this->created_at = new DateTimeImmutable();
+        $this->setCreatedAt(new DateTimeImmutable());
     }
 }
 ```
@@ -102,7 +104,7 @@ $repository->find(23); // returns ?AbstractEntity
 
 #### How values are returned from the database
 
-Parable ORM includes `TypeCaster`, which attempts to cast values to the appropriate type. The default return type for it is `string`, but it also returns `DateTimeImmutable` values.
+Parable ORM includes `TypeCaster`, which attempts to cast values to the appropriate type. The default return type for it is `string`, but it also returns `DateTimeImmutable` values. It can interpret standard format `DATETIME`, `DATE` and `TIME` fields.
 
 Since it's impossible to automatically decide whether a numerical string was supposed to be a string or an int, these are also kept as `string` values.
 
