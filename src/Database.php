@@ -287,7 +287,6 @@ class Database
      */
     public function __debugInfo()
     {
-        var_dump('dump in Database::__debugInfo');
         $clone = clone $this;
 
         $clone->setPassword('****** (masked)');
