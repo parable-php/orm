@@ -106,6 +106,8 @@ $repository->find(23); // returns ?AbstractEntity
 
 Parable ORM includes `TypeCaster`, which attempts to cast values to the appropriate type. The default return type for it is `string`, but it also returns `DateTimeImmutable` values. It can interpret standard format `DATETIME`, `DATE` and `TIME` fields.
 
+This means that any setter that has to do with a date, time or datetime value _must_ accept a `DateTimeImmutable` object, unless you call `TypeCaster::disable()` somewhere in your boot/plugin logic.
+
 Since it's impossible to automatically decide whether a numerical string was supposed to be a string or an int, these are also kept as `string` values.
 
 #### Condition-based repository use
