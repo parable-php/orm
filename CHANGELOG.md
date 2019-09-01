@@ -1,5 +1,11 @@
 # Parable PHP ORM
 
+## 0.6.0
+
+And we're back to no casting whatsoever. 0.5.0 was intended to be a first step to more complete type casting for values, but it became clear the functionality wasn't going where it needed to go.
+
+So, placing the responsibility back at the implementation where I now believe it lies. The other improvements from 0.5.0 have been kept, however.
+
 ## 0.5.0
 
 _Major change_

@@ -75,9 +75,7 @@ abstract class AbstractEntity
             }
 
             if ($value !== null) {
-                $entity->{$setter}(
-                    TypeCaster::castStringToType($value)
-                );
+                $entity->{$setter}($value);
             }
         }
 
