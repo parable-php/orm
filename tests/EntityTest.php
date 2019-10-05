@@ -6,11 +6,10 @@ use DateTimeImmutable;
 use Parable\Orm\Exception;
 use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestEntityWithMissingSetters;
-use Parable\Orm\Tests\Classes\TestEntityWithoutTraits;
 
 class EntityTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCreateValidEntityAndToArray()
+    public function testCreateValidEntityAndToArray(): void
     {
         $entity = new TestEntity();
 
@@ -27,7 +26,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetPrimaryKey()
+    public function testGetPrimaryKey(): void
     {
         $entity = new TestEntity();
 
@@ -38,7 +37,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         self::assertSame(123, $entity->getPrimaryKey('id'));
     }
 
-    public function testFromDatabaseItem()
+    public function testFromDatabaseItem(): void
     {
         $createdAt = date('Y-m-d H:i:s');
 
@@ -59,7 +58,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFromDatabaseItemBreaksIfIdOmitted()
+    public function testFromDatabaseItemBreaksIfIdOmitted(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
@@ -69,7 +68,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         TestEntity::fromDatabaseItem('id', []);
     }
 
-    public function testFromDatabaseItemBreaksIfInvalidValuePassed()
+    public function testFromDatabaseItemBreaksIfInvalidValuePassed(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
@@ -79,7 +78,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         TestEntity::fromDatabaseItem('id', ['id' => 123, 'bloop' => 'what']);
     }
 
-    public function testFromDatabaseItemBreaksOnMissingSetters()
+    public function testFromDatabaseItemBreaksOnMissingSetters(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
@@ -92,7 +91,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    public function testValidatePrivateKeyDoesNothingForValidKey()
+    public function testValidatePrivateKeyDoesNothingForValidKey(): void
     {
         $entity = new TestEntity();
 
@@ -102,7 +101,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         self::expectNotToPerformAssertions();
     }
 
-    public function testValidatePrivateKeyThrowsOnInvalidKey()
+    public function testValidatePrivateKeyThrowsOnInvalidKey(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
@@ -114,14 +113,14 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity->validatePrimaryKey('bloop');
     }
 
-    public function testGetPrimaryKeyWorks()
+    public function testGetPrimaryKeyWorks(): void
     {
         $entity = new TestEntity(4321);
 
         self::assertSame(4321, $entity->getPrimaryKey('id'));
     }
 
-    public function testGetPrimaryKeyThrowsOnInvalidKey()
+    public function testGetPrimaryKeyThrowsOnInvalidKey(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
@@ -133,7 +132,32 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         self::assertNull($entity->getPrimaryKey('bloop'));
     }
 
-    public function testCreateValidEntityAndToArrayWithoutEmptyValues()
+    public function testToArrayWithout(): void
+    {
+        $entity = new TestEntity();
+
+        $entity->setName('User McReady');
+
+        self::assertSame(
+            [
+                'id' => null,
+                'name' => 'User McReady',
+                'created_at' => null,
+                'updated_at' => null,
+            ],
+            $entity->toArray()
+        );
+
+        self::assertSame(
+            [
+                'id' => null,
+                'updated_at' => null,
+            ],
+            $entity->toArrayWithout('name', 'created_at')
+        );
+    }
+
+    public function testCreateValidEntityAndToArrayWithoutEmptyValues(): void
     {
         $entity = new TestEntity();
 
@@ -147,7 +171,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCreateValidEntityAndToArrayWithOnlyChanges()
+    public function testCreateValidEntityAndToArrayWithOnlyChanges(): void
     {
         $entity = new TestEntity(1, 'User Name');
 
@@ -178,7 +202,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetPropertiesReturnsAllProperties()
+    public function testGetPropertiesReturnsAllProperties(): void
     {
         $entity = new TestEntity();
 
@@ -188,7 +212,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testMarkCreatedAt()
+    public function testMarkCreatedAt(): void
     {
         $entity = new TestEntity();
 
@@ -204,7 +228,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testMarkUpdatedAt()
+    public function testMarkUpdatedAt(): void
     {
         $entity = new TestEntity();
 
@@ -218,5 +242,21 @@ class EntityTest extends \PHPUnit\Framework\TestCase
             DateTimeImmutable::class,
             DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $entity->getUpdatedAt())
         );
+    }
+
+    public function testHasBeenMarkedAsOriginal(): void
+    {
+        // TestEntity has been marked as original automatically.
+        $entity = new TestEntity();
+
+        self::assertTrue($entity->hasBeenMarkedAsOriginal());
+
+        $entity->unmarkAsOriginal();
+
+        self::assertFalse($entity->hasBeenMarkedAsOriginal());
+
+        $entity->markAsOriginal();
+
+        self::assertTrue($entity->hasBeenMarkedAsOriginal());
     }
 }

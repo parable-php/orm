@@ -58,7 +58,7 @@ class ValueSetBuilderTest extends \PHPUnit\Framework\TestCase
         $this->valueSetBuilder = new ValueSetBuilder();
     }
 
-    public function testBasicUsageWithInsert()
+    public function testBasicUsageWithInsert(): void
     {
         $query = Query::insert($this->repository->getTableName());
 
@@ -80,7 +80,7 @@ class ValueSetBuilderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testInsertValueSetRemovesPrimaryKey()
+    public function testInsertValueSetRemovesPrimaryKey(): void
     {
         $query = Query::insert($this->repository->getTableName());
 
@@ -103,7 +103,7 @@ class ValueSetBuilderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testBasicUsageWithUpdateQuery()
+    public function testBasicUsageWithUpdateQuery(): void
     {
         $query = Query::update($this->repository->getTableName());
 
@@ -134,7 +134,7 @@ class ValueSetBuilderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testNonUpdateOrInsertQueryBreaks()
+    public function testNonUpdateOrInsertQueryBreaks(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot build value set for Query of type SELECT');

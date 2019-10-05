@@ -9,7 +9,7 @@ use PDO;
 
 class DatabaseTest extends \PHPUnit\Framework\TestCase
 {
-    public function testSetTypeWithMySQL()
+    public function testSetTypeWithMySQL(): void
     {
         $database = new Database();
 
@@ -18,7 +18,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertSame(Database::TYPE_MYSQL, $database->getType());
     }
 
-    public function testSetTypeWithSqlite()
+    public function testSetTypeWithSqlite(): void
     {
         $this->expectExceptionMessage('Sqlite requires a database.');
         $this->expectException(Exception::class);
@@ -30,7 +30,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $database->connect();
     }
 
-    public function testSetTypeWithMySQLWithoutHost()
+    public function testSetTypeWithMySQLWithoutHost(): void
     {
         $this->expectExceptionMessage('MySQL requires a host.');
         $this->expectException(Exception::class);
@@ -42,7 +42,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $database->connect();
     }
 
-    public function testSetTypeWithMySQLWithoutDatabase()
+    public function testSetTypeWithMySQLWithoutDatabase(): void
     {
         $this->expectExceptionMessage('MySQL requires a database name.');
         $this->expectException(Exception::class);
@@ -55,7 +55,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $database->connect();
     }
 
-    public function testSetAllValuesForMySQL()
+    public function testSetAllValuesForMySQL(): void
     {
         $database = new Database();
 
@@ -78,7 +78,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertSame(PDO::ERRMODE_EXCEPTION, $database->getErrorMode());
     }
 
-    public function testSetAllValuesForSqlite()
+    public function testSetAllValuesForSqlite(): void
     {
         $database = new Database();
 
@@ -91,7 +91,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertSame(PDO::ERRMODE_EXCEPTION, $database->getErrorMode());
     }
 
-    public function testSqliteWithInvalidDatabase()
+    public function testSqliteWithInvalidDatabase(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Could not read Sqlite database: database.sqlite");
@@ -105,7 +105,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $database->connect();
     }
 
-    public function testSetTypeWithInvalidType()
+    public function testSetTypeWithInvalidType(): void
     {
         $this->expectExceptionMessage("Invalid database type: '999'");
         $this->expectException(Exception::class);
@@ -115,7 +115,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $database->setType(999);
     }
 
-    public function testSetErrorModeWithInvalidValue()
+    public function testSetErrorModeWithInvalidValue(): void
     {
         $this->expectExceptionMessage("Invalid error mode set: '999'");
         $this->expectException(Exception::class);
@@ -125,7 +125,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $database->setErrorMode(999);
     }
 
-    public function testConnectWithSqlite()
+    public function testConnectWithSqlite(): void
     {
         $database = new Database();
         $database->setType(Database::TYPE_SQLITE);
@@ -139,7 +139,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertInstanceOf(PDO::class, $database->getConnection());
     }
 
-    public function testConnectWillNotDoAnythingIfConnectionNotNull()
+    public function testConnectWillNotDoAnythingIfConnectionNotNull(): void
     {
         $database = new Database();
         $database->setType(Database::TYPE_SQLITE);
@@ -160,7 +160,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertSame($connection1, $connection2);
     }
 
-    public function testReconnectWillReconnectEvenIfConnected()
+    public function testReconnectWillReconnectEvenIfConnected(): void
     {
         $database = new Database();
         $database->setType(Database::TYPE_SQLITE);
@@ -181,7 +181,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertNotSame($connection1, $connection2);
     }
 
-    public function testDisconnectRemovesConnection()
+    public function testDisconnectRemovesConnection(): void
     {
         $database = new Database();
         $database->setType(Database::TYPE_SQLITE);
@@ -196,7 +196,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertNull($database->getConnection());
     }
 
-    public function testQuery()
+    public function testQuery(): void
     {
         $database = new Database();
         $database->setType(Database::TYPE_SQLITE);
@@ -209,7 +209,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertSame("2", $result[0]['1+1']);
     }
 
-    public function testQueryConnectsIfNotAlreadyConnected()
+    public function testQueryConnectsIfNotAlreadyConnected(): void
     {
         $database = new Database();
         $database->setType(Database::TYPE_SQLITE);
@@ -220,7 +220,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertSame("2", $result[0]['1+1']);
     }
 
-    public function testQueryThrowsOnInvalidQuery()
+    public function testQueryThrowsOnInvalidQuery(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Could not perform query: '1', reason: HY000: 'near \"1\": syntax error'");
@@ -234,7 +234,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         self::assertSame("2", $result[0]['1+1']);
     }
 
-    public function testDebugInfoLeadsToNothingForPrintr()
+    public function testDebugInfoLeadsToNothingForPrintr(): void
     {
         $database = new Database();
 
@@ -249,7 +249,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
      * This test is here so that it won't come as a surprise that a
      * var_exported database instance will contain the password.
      */
-    public function testDebugInfoCannotPreventVarExport()
+    public function testDebugInfoCannotPreventVarExport(): void
     {
         $database = new Database();
 

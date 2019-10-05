@@ -232,7 +232,7 @@ abstract class AbstractRepository
         $insertQuery = Query::insert($this->getTableName());
 
         foreach ($this->deferredSaveEntities as $entity) {
-            if ($this->isEntityStored($entity)) {
+            if ($this->isStored($entity)) {
                 $this->save($entity);
 
                 continue;
@@ -306,7 +306,7 @@ abstract class AbstractRepository
     {
         $this->validateEntityCorrectClass($entity);
 
-        if (!$this->isEntityStored($entity)) {
+        if (!$this->isStored($entity)) {
             $query = Query::insert($this->getTableName());
 
             if ($entity instanceof SupportsCreatedAt) {
@@ -350,7 +350,7 @@ abstract class AbstractRepository
         foreach ($entities as $entity) {
             $this->validateEntityCorrectClass($entity);
 
-            if (!$this->isEntityStored($entity)) {
+            if (!$this->isStored($entity)) {
                 throw new Exception('Cannot delete entity that is not stored.');
             }
 
@@ -360,9 +360,10 @@ abstract class AbstractRepository
         return $primaryKeys;
     }
 
-    protected function isEntityStored(AbstractEntity $entity): bool
+    public function isStored(AbstractEntity $entity): bool
     {
-        return $entity->getPrimaryKey($this->getPrimaryKey()) !== null;
+        return $entity->getPrimaryKey($this->getPrimaryKey()) !== null
+            && $entity->hasBeenMarkedAsOriginal();
     }
 
     protected function validateEntityCorrectClass(AbstractEntity $entity): void

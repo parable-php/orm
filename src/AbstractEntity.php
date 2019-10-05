@@ -26,6 +26,11 @@ abstract class AbstractEntity
         $this->originalProperties = $this->toArray();
     }
 
+    public function hasBeenMarkedAsOriginal(): bool
+    {
+        return $this->originalProperties !== [];
+    }
+
     public static function fromDatabaseItem(string $primaryKey, array $values): self
     {
         $entity = new static();
@@ -112,6 +117,17 @@ abstract class AbstractEntity
         }
 
         return $filtered;
+    }
+
+    public function toArrayWithout(string ...$keys): array
+    {
+        $array = $this->toArray();
+
+        foreach ($keys as $key) {
+            unset($array[$key]);
+        }
+
+        return $array;
     }
 
     public function toArrayWithoutEmptyValues(): array

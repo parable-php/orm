@@ -1,5 +1,13 @@
 # Parable PHP ORM
 
+## 0.6.1
+
+_Changes_
+
+- `AbstractEntity::toArrayWithout(string ...$keys)` will allow you to get an array representation of an entity without the specified keys.
+- `AbstractEntity::hasBeenMarkedAsOriginal()` has been added, and can be used to determine whether it was loaded from the database or just saved.
+- `AbstractRepository::isStored()` is now available, and will tell you if the ORM thinks the entity has been stored.
+
 ## 0.6.0
 
 And we're back to no casting whatsoever. 0.5.0 was intended to be a first step to more complete type casting for values, but it became clear the functionality wasn't going where it needed to go.

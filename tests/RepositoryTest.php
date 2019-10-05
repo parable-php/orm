@@ -79,7 +79,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $resetter($database);
     }
 
-    public function testCreateRepositorySuccessful()
+    public function testCreateRepositorySuccessful(): void
     {
         self::assertInstanceOf(TestRepository::class, $this->repository);
         self::assertSame(TestEntity::class, $this->repository->getEntityClass());
@@ -89,7 +89,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertCount(1, $this->repository->findAll());
     }
 
-    public function testCreateRepositorySuccessfulWithoutDatabaseButFailsOnPerformingAnything()
+    public function testCreateRepositorySuccessfulWithoutDatabaseButFailsOnPerformingAnything(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Cannot use repository methods without database connection.");
@@ -104,12 +104,12 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $repository->findAll();
     }
 
-    public function testCreateEntityClass()
+    public function testCreateEntityClass(): void
     {
         self::assertInstanceOf(TestEntity::class, $this->repository->createEntityClass());
     }
 
-    public function testCreateEntityClassReturnsNewOneEveryTime()
+    public function testCreateEntityClassReturnsNewOneEveryTime(): void
     {
         self::assertInstanceOf(TestEntity::class, $entity1 = $this->repository->createEntityClass());
         self::assertInstanceOf(TestEntity::class, $entity2 = $this->repository->createEntityClass());
@@ -117,7 +117,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertNotSame($entity1, $entity2);
     }
 
-    public function testCreateEntityClassThrowsOnInvalidClassName()
+    public function testCreateEntityClassThrowsOnInvalidClassName(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Traits class 'noooope' does not exist.");
@@ -132,7 +132,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $repo->createEntityClass();
     }
 
-    public function testCreateEntityClassThrowsOnClassThatDoesNotExtendAbstractEntity()
+    public function testCreateEntityClassThrowsOnClassThatDoesNotExtendAbstractEntity(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Class 'stdClass' does not extend AbstractEntity.");
@@ -147,7 +147,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $repo->createEntityClass();
     }
 
-    public function testFind()
+    public function testFind(): void
     {
         $defaultUser = $this->repository->find(1);
 
@@ -155,14 +155,14 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertSame($this->defaultUser->toArray(), $defaultUser->toArray());
     }
 
-    public function testFindWithInvalidKeyReturnsNull()
+    public function testFindWithInvalidKeyReturnsNull(): void
     {
         $defaultUser = $this->repository->find(999);
 
         self::assertNull($defaultUser);
     }
 
-    public function testCountAll()
+    public function testCountAll(): void
     {
         $userCount = $this->repository->countAll();
 
@@ -183,7 +183,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertSame(4, $userCount);
     }
 
-    public function testFindAll()
+    public function testFindAll(): void
     {
         $user = new TestEntity();
         $user->setName('First Custom User');
@@ -205,7 +205,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFindAllWithOrder()
+    public function testFindAllWithOrder(): void
     {
         $user = new TestEntity();
         $user->setName('First Custom User');
@@ -241,7 +241,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFindAllWithLimit()
+    public function testFindAllWithLimit(): void
     {
         $user = new TestEntity();
         $user->setName('First Custom User');
@@ -259,7 +259,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFindAllWithLimitAndOffset()
+    public function testFindAllWithLimitAndOffset(): void
     {
         $user1 = new TestEntity();
         $user1->setName('First Custom User');
@@ -280,7 +280,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFindAllWithOrderDescendingLimitAndOffset()
+    public function testFindAllWithOrderDescendingLimitAndOffset(): void
     {
         $user1 = new TestEntity();
         $user1->setName('First Custom User');
@@ -301,7 +301,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFindBy()
+    public function testFindBy(): void
     {
         $user = new TestEntity();
         $user->setName('First Custom User');
@@ -321,7 +321,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFindByWithOrder()
+    public function testFindByWithOrder(): void
     {
         $user1 = new TestEntity();
         $user1->setName('First Custom User');
@@ -344,7 +344,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFindUniqueByReturnsNullIfNoneFound()
+    public function testFindUniqueByReturnsNullIfNoneFound(): void
     {
         /** @var TestEntity[] $users */
         $user = $this->repository->findUniqueBy(function (Query $query) {
@@ -354,7 +354,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertNull($user);
     }
 
-    public function testFindUniqueByReturnsAbstractEntity()
+    public function testFindUniqueByReturnsAbstractEntity(): void
     {
         $user = new TestEntity();
         $user->setName('Unique name');
@@ -370,7 +370,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertSame('Unique name', $user->getName());
     }
 
-    public function testFindUniqueByThrowsOnMoreThanOneResult()
+    public function testFindUniqueByThrowsOnMoreThanOneResult(): void
     {
         self::expectException(Exception::class);
         self::expectExceptionMessage("Found more than one of");
@@ -389,7 +389,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         });
     }
 
-    public function testCountBy()
+    public function testCountBy(): void
     {
         $user1 = new TestEntity();
         $user2 = new TestEntity();
@@ -413,7 +413,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertSame(3, $userCount);
     }
 
-    public function testSaveNewEntity()
+    public function testSaveNewEntity(): void
     {
         $user = new TestEntity();
         $user->setName('First Custom User');
@@ -431,7 +431,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertSame('First Custom User', $user->getName());
     }
 
-    public function testSaveExistingEntity()
+    public function testSaveExistingEntity(): void
     {
         self::assertCount(1, $users = $this->repository->findAll());
 
@@ -443,7 +443,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertCount(1, $users = $this->repository->findAll());
     }
 
-    public function testSaveExistingEntityOnlyUpdatesChangedValues()
+    public function testSaveExistingEntityOnlyUpdatesChangedValues(): void
     {
         self::assertCount(1, $users = $this->repository->findAll());
 
@@ -461,7 +461,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertCount(1, $users = $this->repository->findAll());
     }
 
-    public function testSaveMultipleWorksAsExpectedWithNewEntities()
+    public function testSaveMultipleWorksAsExpectedWithNewEntities(): void
     {
         $user1 = new TestEntity();
         $user2 = new TestEntity();
@@ -479,7 +479,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         self::assertCount(4, $this->repository->findAll());
     }
 
-    public function testSaveMultipleWorksAsExpectedWithExistingEntities()
+    public function testSaveMultipleWorksAsExpectedWithExistingEntities(): void
     {
         $user1 = new TestEntity();
         $user2 = new TestEntity();
@@ -501,7 +501,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         $user3->setName('User 3 Again');
     }
 
-    public function testDeferSave()
+    public function testDeferSave(): void
     {
         self::assertCount(1, $this->repository->findAll());
 
@@ -523,7 +523,7 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-public function testDeferSaveAllWithMultipleEntities()
+public function testDeferSaveAllWithMultipleEntities(): void
 {
     self::assertCount(1, $this->repository->findAll());
 
@@ -566,7 +566,7 @@ public function testDeferSaveAllWithMultipleEntities()
     );
 }
 
-    public function testSaveMultipleDeferredWorksAsExpectedWithNewAndUpdatedEntities()
+    public function testSaveMultipleDeferredWorksAsExpectedWithNewAndUpdatedEntities(): void
     {
         $user1 = new TestEntity();
         $user2 = new TestEntity();
@@ -588,7 +588,7 @@ public function testDeferSaveAllWithMultipleEntities()
         self::assertCount(3, $this->repository->findAll());
     }
 
-    public function testSaveWithNoChangesDoesntActuallyRunQuery()
+    public function testSaveWithNoChangesDoesntActuallyRunQuery(): void
     {
         $repository = new class (...$this->container->getDependenciesFor(TestRepository::class)) extends TestRepository
         {
@@ -613,7 +613,7 @@ public function testDeferSaveAllWithMultipleEntities()
         self::assertSame(1, $this->database->getQueryCount());
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         self::assertCount(1, $this->repository->findAll());
 
@@ -622,7 +622,7 @@ public function testDeferSaveAllWithMultipleEntities()
         self::assertCount(0, $this->repository->findAll());
     }
 
-    public function testDeleteMultiple()
+    public function testDeleteMultiple(): void
     {
         $user1 = new TestEntity();
         $user2 = new TestEntity();
@@ -647,7 +647,7 @@ public function testDeferSaveAllWithMultipleEntities()
         );
     }
 
-    public function testDeleteUnsavedEntitiesFails()
+    public function testDeleteUnsavedEntitiesFails(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot delete entity that is not stored.');
@@ -657,7 +657,7 @@ public function testDeferSaveAllWithMultipleEntities()
         $this->repository->delete($user);
     }
 
-    public function testDeleteUnknownEntitiesFails()
+    public function testDeleteUnknownEntitiesFails(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
@@ -670,7 +670,7 @@ public function testDeferSaveAllWithMultipleEntities()
         $this->repository->delete($user);
     }
 
-    public function testDeferDelete()
+    public function testDeferDelete(): void
     {
         $this->repository->deferDelete($this->defaultUser);
 
@@ -681,7 +681,7 @@ public function testDeferSaveAllWithMultipleEntities()
         self::assertCount(0, $users = $this->repository->findAll());
     }
 
-    public function testDeferDeleteMultiple()
+    public function testDeferDeleteMultiple(): void
     {
         $user1 = new TestEntity();
         $user2 = new TestEntity();
@@ -702,7 +702,7 @@ public function testDeferSaveAllWithMultipleEntities()
         self::assertCount(1, $users = $this->repository->findAll());
     }
 
-    public function testNoPrimaryKeyPosesAProblem()
+    public function testNoPrimaryKeyThrowsAnException(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
@@ -713,5 +713,35 @@ public function testDeferSaveAllWithMultipleEntities()
         $repository = $this->container->build(TestRepositoryWithoutPrimaryKey::class);
 
         $repository->findAll();
+    }
+
+    public function testIsStoredDoesNotConsiderEntityStoredWithoutPrimaryKeyOrMarkedAsOriginal(): void
+    {
+        $user1 = new TestEntity();
+
+        // Test entity is marked as original by default
+        $user1->unmarkAsOriginal();
+
+        self::assertFalse($this->repository->isStored($user1));
+    }
+
+    public function testIsStoredDoesNotConsiderEntityStoredWithPrimaryKeyButNotMarkedAsOriginal(): void
+    {
+        $user1 = new TestEntity();
+        $user1->setPrimaryKey('id', 1);
+
+        // Test entity is marked as original by default
+        $user1->unmarkAsOriginal();
+
+        self::assertFalse($this->repository->isStored($user1));
+    }
+
+    public function testIsStoredConsidersEntityStoredWithPrimaryKeyAndMarkedAsOriginal(): void
+    {
+        // Test entity is marked as original by default
+        $user1 = new TestEntity();
+        $user1->setPrimaryKey('id', 1);
+
+        self::assertTrue($this->repository->isStored($user1));
     }
 }

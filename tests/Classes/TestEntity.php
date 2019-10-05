@@ -33,6 +33,11 @@ class TestEntity extends AbstractEntity implements SupportsCreatedAt, SupportsUp
         $this->originalProperties = $this->toArray();
     }
 
+    public function unmarkAsOriginal(): void
+    {
+        $this->originalProperties = [];
+    }
+
     public function getId()
     {
         return $this->id;
