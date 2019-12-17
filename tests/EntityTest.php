@@ -4,6 +4,7 @@ namespace Parable\Orm\Tests;
 
 use DateTimeImmutable;
 use Parable\Di\Container;
+use Parable\Orm\Database;
 use Parable\Orm\Exception;
 use Parable\Orm\PropertyTypeDeterminer;
 use Parable\Orm\Tests\Classes\TestEntity;
@@ -244,30 +245,121 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity = new TestEntityWithTypedProperties();
 
         $entity->with(
-            1,
-            new DateTimeImmutable('2019-12-01 12:34:45'),
-            new DateTimeImmutable('2019-12-01 12:34:45'),
-            new DateTimeImmutable('2019-12-01 12:34:45')
+            '1',
+            '2019-12-01',
+            '12:34:45',
+            '2019-12-01 12:34:45'
         );
 
-        $id = PropertyTypeDeterminer::typeProperty($entity, 'id', '1');
-        $date = PropertyTypeDeterminer::typeProperty($entity, 'date', '2019-12-01');
-        $time = PropertyTypeDeterminer::typeProperty($entity, 'time', '05:00:00');
-        $datetime = PropertyTypeDeterminer::typeProperty($entity, 'datetime', '2019-12-01 05:00:00');
+        $id = PropertyTypeDeterminer::typeProperty($entity, 'id', $entity->getId());
+        $date = PropertyTypeDeterminer::typeProperty($entity, 'date', $entity->getDate());
+        $time = PropertyTypeDeterminer::typeProperty($entity, 'time', $entity->getTime());
+        $datetime = PropertyTypeDeterminer::typeProperty($entity, 'datetime', $entity->getDatetime());
+        $updatedAt = PropertyTypeDeterminer::typeProperty($entity, 'datetime', $entity->getUpdatedAt());
 
         self::assertIsInt($id);
         self::assertInstanceOf(DateTimeImmutable::class, $date);
         self::assertInstanceOf(DateTimeImmutable::class, $time);
         self::assertInstanceOf(DateTimeImmutable::class, $datetime);
+        self::assertNull($updatedAt);
 
         $id = PropertyTypeDeterminer::untypeProperty($entity, 'id', $id);
         $date = PropertyTypeDeterminer::untypeProperty($entity, 'date', $date);
         $time = PropertyTypeDeterminer::untypeProperty($entity, 'time', $time);
         $datetime = PropertyTypeDeterminer::untypeProperty($entity, 'datetime', $datetime);
+        $updatedAt = PropertyTypeDeterminer::untypeProperty($entity, 'datetime', $updatedAt);
 
         self::assertSame(1, $id);
         self::assertSame('2019-12-01', $date);
-        self::assertSame('05:00:00', $time);
-        self::assertSame('2019-12-01 05:00:00', $datetime);
+        self::assertSame('12:34:45', $time);
+        self::assertSame('2019-12-01 12:34:45', $datetime);
+        self::assertNull($updatedAt);
+    }
+
+    public function testTypingIntThrowsOnInvalidValue(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Could not type 'bla' as TYPE_INT");
+
+        PropertyTypeDeterminer::typeProperty($entity, 'id', 'bla');
+    }
+
+    public function testTypingDateTypeThrowsOnInvalidValue(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Could not type 'bla' as TYPE_DATE with format " . Database::DATE_SQL);
+
+        PropertyTypeDeterminer::typeProperty($entity, 'date', 'bla');
+    }
+
+    public function testTypingTimeTypeThrowsOnInvalidValue(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Could not type 'bla' as TYPE_TIME with format " . Database::TIME_SQL);
+
+        PropertyTypeDeterminer::typeProperty($entity, 'time', 'bla');
+    }
+
+    public function testTypingDateTimeTypeThrowsOnInvalidValue(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Could not type 'bla' as TYPE_DATETIME with format " . Database::DATETIME_SQL);
+
+        PropertyTypeDeterminer::typeProperty($entity, 'datetime', 'bla');
+    }
+
+    public function testUntypeOnNonNumericIntThrows(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Could not untype 'bla' as TYPE_INT");
+
+        PropertyTypeDeterminer::untypeProperty($entity, 'id', 'bla');
+    }
+
+    public function testUntypingDateTypeThrowsOnInvalidValue(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Could not untype 'bla' as TYPE_DATE");
+
+        PropertyTypeDeterminer::untypeProperty($entity, 'date', 'bla');
+    }
+
+    public function testUntypingTimeTypeThrowsOnInvalidValue(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Could not untype 'bla' as TYPE_TIME");
+
+        PropertyTypeDeterminer::untypeProperty($entity, 'time', 'bla');
+    }
+
+    public function testUntypingDateTimeTypeThrowsOnInvalidValue(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Could not untype 'bla' as TYPE_DATETIME");
+
+        PropertyTypeDeterminer::untypeProperty($entity, 'datetime', 'bla');
+    }
+
+    public function testUntypeOnNullDoesNothing(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        self::assertNull(PropertyTypeDeterminer::untypeProperty($entity, 'datetime', null));
     }
 }

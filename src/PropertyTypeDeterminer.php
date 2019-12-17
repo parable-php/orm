@@ -8,9 +8,9 @@ use Parable\Orm\Features\HasTypedProperties;
 class PropertyTypeDeterminer
 {
     public const TYPE_INT = 0;
-    public const TYPE_DATETIME = 1;
-    public const TYPE_DATE = 2;
-    public const TYPE_TIME = 3;
+    public const TYPE_DATE = 1;
+    public const TYPE_TIME = 2;
+    public const TYPE_DATETIME = 3;
 
     public static function typeProperty(AbstractEntity $entity, string $property, $value)
     {
@@ -28,13 +28,24 @@ class PropertyTypeDeterminer
 
         switch ($type) {
             case self::TYPE_INT:
+                if (!is_numeric($value)) {
+                    throw new Exception(sprintf(
+                        "Could not type '%s' as TYPE_INT",
+                        $value_original
+                    ));
+                }
+
                 return (int)$value;
 
             case self::TYPE_DATE:
                 $value = DateTimeImmutable::createFromFormat(Database::DATE_SQL, $value);
 
                 if ($value === false) {
-                    throw new Exception('Cannot type ' . $value_original . ' as DATE_SQL');
+                    throw new Exception(sprintf(
+                        "Could not type '%s' as TYPE_DATE with format %s",
+                        $value_original,
+                        Database::DATE_SQL
+                    ));
                 }
 
                 break;
@@ -43,7 +54,11 @@ class PropertyTypeDeterminer
                 $value = DateTimeImmutable::createFromFormat(Database::TIME_SQL, $value);
 
                 if ($value === false) {
-                    throw new Exception('Cannot type ' . $value_original . ' as TIME_SQL');
+                    throw new Exception(sprintf(
+                        "Could not type '%s' as TYPE_TIME with format %s",
+                        $value_original,
+                        Database::TIME_SQL
+                    ));
                 }
 
                 break;
@@ -52,7 +67,11 @@ class PropertyTypeDeterminer
                 $value = DateTimeImmutable::createFromFormat(Database::DATETIME_SQL, $value);
 
                 if ($value === false) {
-                    throw new Exception('Cannot type ' . $value_original . ' as DATETIME_SQL');
+                    throw new Exception(sprintf(
+                        "Could not type '%s' as TYPE_DATETIME with format %s",
+                        $value_original,
+                        Database::DATETIME_SQL
+                    ));
                 }
         }
 
@@ -72,7 +91,18 @@ class PropertyTypeDeterminer
         }
 
         switch ($type) {
+            case self::TYPE_INT:
+                $type = 'TYPE_INT';
+
+                if (is_numeric($value)) {
+                    return (int)$value;
+                }
+
+                break;
+
             case self::TYPE_DATE:
+                $type = 'TYPE_DATE';
+
                 if ($value instanceof DateTimeImmutable) {
                     return $value->format(Database::DATE_SQL);
                 }
@@ -80,6 +110,8 @@ class PropertyTypeDeterminer
                 break;
 
             case self::TYPE_TIME:
+                $type = 'TYPE_TIME';
+
                 if ($value instanceof DateTimeImmutable) {
                     return $value->format(Database::TIME_SQL);
                 }
@@ -87,6 +119,8 @@ class PropertyTypeDeterminer
                 break;
 
             case self::TYPE_DATETIME:
+                $type = 'TYPE_DATETIME';
+
                 if ($value instanceof DateTimeImmutable) {
                     return $value->format(Database::DATETIME_SQL);
                 }
@@ -94,6 +128,10 @@ class PropertyTypeDeterminer
                 break;
         }
 
-        return $value;
+        throw new Exception(sprintf(
+            "Could not untype '%s' as %s",
+            $value,
+            $type
+        ));
     }
 }

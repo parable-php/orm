@@ -17,11 +17,11 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
     protected $updated_at;
 
     public function with(
-        int $id = null,
-        DateTimeImmutable $date = null,
-        DateTimeImmutable $time = null,
-        DateTimeImmutable $datetime = null,
-        DateTimeImmutable $updated_at = null
+        $id = null,
+        $date = null,
+        $time = null,
+        $datetime = null,
+        $updated_at = null
     ): void {
         $this->id = $id;
         $this->date = $date;
@@ -50,7 +50,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         return null;
     }
 
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }
@@ -60,7 +60,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         $this->id = $id;
     }
 
-    public function getDate(): ?DateTimeImmutable
+    public function getDate()
     {
         return $this->date;
     }
@@ -70,7 +70,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         $this->date = $date;
     }
 
-    public function getTime(): ?DateTimeImmutable
+    public function getTime()
     {
         return $this->time;
     }
@@ -80,7 +80,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         $this->time = $time;
     }
 
-    public function getDatetime(): ?DateTimeImmutable
+    public function getDatetime()
     {
         return $this->datetime;
     }
@@ -90,7 +90,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         $this->datetime = $datetime;
     }
 
-    public function getUpdatedAt(): ?DateTimeImmutable
+    public function getUpdatedAt()
     {
         return $this->updated_at;
     }
