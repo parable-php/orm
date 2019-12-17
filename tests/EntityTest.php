@@ -3,9 +3,12 @@
 namespace Parable\Orm\Tests;
 
 use DateTimeImmutable;
+use Parable\Di\Container;
 use Parable\Orm\Exception;
+use Parable\Orm\PropertyTypeDeterminer;
 use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestEntityWithMissingSetters;
+use Parable\Orm\Tests\Classes\TestEntityWithTypedProperties;
 
 class EntityTest extends \PHPUnit\Framework\TestCase
 {
@@ -41,11 +44,15 @@ class EntityTest extends \PHPUnit\Framework\TestCase
     {
         $createdAt = date('Y-m-d H:i:s');
 
-        $entity = TestEntity::fromDatabaseItem('id', [
-            'id' => 123,
-            'name' => 'User McReady',
-            'created_at' => $createdAt,
-        ]);
+        $entity = TestEntity::fromDatabaseItem(
+            new Container(),
+            'id',
+            [
+                'id' => 123,
+                'name' => 'User McReady',
+                'created_at' => $createdAt,
+            ]
+        );
 
         self::assertSame(
             [
@@ -62,55 +69,37 @@ class EntityTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "Could not set primary key 'id' on Entity Parable\Orm\Tests\Classes\TestEntity from values"
+            "Could not set primary key 'id' on entity Parable\Orm\Tests\Classes\TestEntity from database values"
         );
 
-        TestEntity::fromDatabaseItem('id', []);
+        TestEntity::fromDatabaseItem(new Container(), 'id', []);
     }
 
     public function testFromDatabaseItemBreaksIfInvalidValuePassed(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "Property 'bloop' does not exist on Entity Parable\Orm\Tests\Classes\TestEntity"
+            "Property 'bloop' does not exist on entity Parable\Orm\Tests\Classes\TestEntity"
         );
 
-        TestEntity::fromDatabaseItem('id', ['id' => 123, 'bloop' => 'what']);
+        TestEntity::fromDatabaseItem(new Container(), 'id', ['id' => 123, 'bloop' => 'what']);
     }
 
     public function testFromDatabaseItemBreaksOnMissingSetters(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "Setter method 'setName' not defined on Entity Parable\Orm\Tests\Classes\TestEntityWithMissingSetters"
+            "Setter method 'setName' not defined on entity Parable\Orm\Tests\Classes\TestEntityWithMissingSetters"
         );
 
-        TestEntityWithMissingSetters::fromDatabaseItem('id', [
-            'id' => 123,
-            'name' => 'User McReady',
-        ]);
-    }
-
-    public function testValidatePrivateKeyDoesNothingForValidKey(): void
-    {
-        $entity = new TestEntity();
-
-        // This would throw if incorrect
-        $entity->validatePrimaryKey('id');
-
-        self::expectNotToPerformAssertions();
-    }
-
-    public function testValidatePrivateKeyThrowsOnInvalidKey(): void
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage(
-            "Primary key property 'bloop' does not exist on Entity Parable\Orm\Tests\Classes\TestEntity"
+        TestEntityWithMissingSetters::fromDatabaseItem(
+            new Container(),
+            'id',
+            [
+                'id' => 123,
+                'name' => 'User McReady',
+            ]
         );
-
-        $entity = new TestEntity();
-
-        $entity->validatePrimaryKey('bloop');
     }
 
     public function testGetPrimaryKeyWorks(): void
@@ -124,7 +113,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "Primary key property 'bloop' does not exist on Entity Parable\Orm\Tests\Classes\TestEntity"
+            "Primary key property 'bloop' does not exist on entity Parable\Orm\Tests\Classes\TestEntity"
         );
 
         $entity = new TestEntity();
@@ -202,16 +191,6 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetPropertiesReturnsAllProperties(): void
-    {
-        $entity = new TestEntity();
-
-        self::assertSame(
-            ['id', 'name', 'created_at', 'updated_at'],
-            $entity->getProperties()
-        );
-    }
-
     public function testMarkCreatedAt(): void
     {
         $entity = new TestEntity();
@@ -258,5 +237,37 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity->markAsOriginal();
 
         self::assertTrue($entity->hasBeenMarkedAsOriginal());
+    }
+
+    public function testTypedProperties(): void
+    {
+        $entity = new TestEntityWithTypedProperties();
+
+        $entity->with(
+            1,
+            new DateTimeImmutable('2019-12-01 12:34:45'),
+            new DateTimeImmutable('2019-12-01 12:34:45'),
+            new DateTimeImmutable('2019-12-01 12:34:45')
+        );
+
+        $id = PropertyTypeDeterminer::typeProperty($entity, 'id', '1');
+        $date = PropertyTypeDeterminer::typeProperty($entity, 'date', '2019-12-01');
+        $time = PropertyTypeDeterminer::typeProperty($entity, 'time', '05:00:00');
+        $datetime = PropertyTypeDeterminer::typeProperty($entity, 'datetime', '2019-12-01 05:00:00');
+
+        self::assertIsInt($id);
+        self::assertInstanceOf(DateTimeImmutable::class, $date);
+        self::assertInstanceOf(DateTimeImmutable::class, $time);
+        self::assertInstanceOf(DateTimeImmutable::class, $datetime);
+
+        $id = PropertyTypeDeterminer::untypeProperty($entity, 'id', $id);
+        $date = PropertyTypeDeterminer::untypeProperty($entity, 'date', $date);
+        $time = PropertyTypeDeterminer::untypeProperty($entity, 'time', $time);
+        $datetime = PropertyTypeDeterminer::untypeProperty($entity, 'datetime', $datetime);
+
+        self::assertSame(1, $id);
+        self::assertSame('2019-12-01', $date);
+        self::assertSame('05:00:00', $time);
+        self::assertSame('2019-12-01 05:00:00', $datetime);
     }
 }

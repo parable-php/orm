@@ -1,5 +1,15 @@
 # Parable PHP ORM
 
+## 0.7.0
+
+_Changes_
+
+- Time for more type casting! By implementing `HasTypedProperties` and the function `getPropertyType(string $property): ?int`, you can optionally allow value type casting from and to the database. Supported types are defined on `PropertyTypeDeterminer` as `TYPE_INT`, `TYPE_DATE`, `TYPE_TIME` and `TYPE_DATETIME`. The last three will return a `DateTimeImmutable` instance. The formats of `DATE_SQL`, `DATE_TIME`, `DATETIME_SQL` are forced for these.
+  - These are cast TO these types after retrieving from the database. This allows, for example, type hinting the setter for created at: `setCreatedAt(DateTimeImmutable $createdAt)` and the getter: `getCreatedAt(): DateTimeImmutable`.
+  - These are transformed back to string values before saving, because `toArray()` does so.
+- `PropertyTypeDeterminer` offers two static methods (`typeProperty` and `untypeProperty`) which will attempt to type, if required, the passed property and value on the entity.
+- New instances of entities are now built using the DI Container. This allows DI to be used in entities if you so wish.
+
 ## 0.6.1
 
 _Changes_
