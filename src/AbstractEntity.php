@@ -2,6 +2,8 @@
 
 namespace Parable\Orm;
 
+use Parable\Di\Container;
+
 abstract class AbstractEntity
 {
     /**
@@ -11,7 +13,7 @@ abstract class AbstractEntity
 
     public function getPrimaryKey(string $key)
     {
-        $this->validatePrimaryKey($key);
+        $this->validatePrimaryKeyExistsOnEntity($key);
 
         return $this->{$key};
     }
@@ -21,83 +23,50 @@ abstract class AbstractEntity
         $this->{$key} = $value;
     }
 
-    public function markAsOriginal(): void
-    {
-        $this->originalProperties = $this->toArray();
-    }
-
     public function hasBeenMarkedAsOriginal(): bool
     {
         return $this->originalProperties !== [];
     }
 
-    public static function fromDatabaseItem(string $primaryKey, array $values): self
+    public static function fromDatabaseItem(Container $container, string $primaryKey, array $values): self
     {
-        $entity = new static();
+        $entity = $container->build(static::class);
 
-        $entity->validatePrimaryKey($primaryKey);
+        $entity->validatePrimaryKeyExistsOnEntity($primaryKey);
 
-        $entity->setPrimaryKey($primaryKey, $values[$primaryKey] ?? null);
-
-        if ($entity->getPrimaryKey($primaryKey) === null) {
+        if (!isset($values[$primaryKey])) {
             throw new Exception(sprintf(
-                "Could not set primary key '%s' on Entity %s from values",
+                "Could not set primary key '%s' on entity %s from database values",
                 $primaryKey,
                 static::class
             ));
         }
 
+        $primaryKeyValue = PropertyTypeDeterminer::typeProperty($entity, $primaryKey, $values[$primaryKey] ?? null);
+
+        $entity->setPrimaryKey($primaryKey, $primaryKeyValue ?? null);
+
         foreach ($values as $property => $value) {
             if (!property_exists($entity, $property)) {
                 throw new Exception(sprintf(
-                    "Property '%s' does not exist on Entity %s",
+                    "Property '%s' does not exist on entity %s",
                     $property,
                     static::class
                 ));
             }
 
-            if ($property === $primaryKey) {
+            if ($property === $primaryKey || $value === null) {
                 continue;
             }
 
-            if (strpos($property, '_') !== false) {
-                $setter = 'set';
+            $setter = $entity->getSetterForProperty($property);
 
-                $propertyParts = explode('_', $property);
-                foreach ($propertyParts as $propertyPart) {
-                    $setter .= ucfirst($propertyPart);
-                }
-            } else {
-                $setter = 'set' . ucfirst($property);
-            }
-
-            if (!method_exists($entity, $setter)) {
-                throw new Exception(sprintf(
-                    "Setter method '%s' not defined on Entity %s",
-                    $setter,
-                    static::class
-                ));
-            }
-
-            if ($value !== null) {
-                $entity->{$setter}($value);
-            }
+            $entity->{$setter}(PropertyTypeDeterminer::typeProperty($entity, $property, $value));
         }
 
         $entity->markAsOriginal();
 
         return $entity;
-    }
-
-    public function validatePrimaryKey(string $key): void
-    {
-        if (!property_exists($this, $key)) {
-            throw new Exception(sprintf(
-                "Primary key property '%s' does not exist on Entity %s",
-                $key,
-                static::class
-            ));
-        }
     }
 
     public function toArray(): array
@@ -108,6 +77,8 @@ abstract class AbstractEntity
         foreach ($array as $key => $value) {
             $key = str_replace('*', '', $key);
             $key = trim(str_replace(static::class, '', $key));
+
+            $value = PropertyTypeDeterminer::untypeProperty($this, $key, $value);
 
             if ($value !== null && !is_scalar($value)) {
                 continue;
@@ -158,8 +129,48 @@ abstract class AbstractEntity
         return $array;
     }
 
-    public function getProperties(): array
+    public function markAsOriginal(): void
+    {
+        $this->originalProperties = $this->toArray();
+    }
+
+    protected function getSetterForProperty(string $property): string
+    {
+        if (strpos($property, '_') !== false) {
+            $setter = 'set';
+
+            $propertyParts = explode('_', $property);
+            foreach ($propertyParts as $propertyPart) {
+                $setter .= ucfirst($propertyPart);
+            }
+        } else {
+            $setter = 'set' . ucfirst($property);
+        }
+
+        if (!method_exists($this, $setter)) {
+            throw new Exception(sprintf(
+                "Setter method '%s' not defined on entity %s",
+                $setter,
+                static::class
+            ));
+        }
+
+        return $setter;
+    }
+
+    protected function getProperties(): array
     {
         return array_keys($this->toArray());
+    }
+
+    protected function validatePrimaryKeyExistsOnEntity(string $key): void
+    {
+        if (!property_exists($this, $key)) {
+            throw new Exception(sprintf(
+                "Primary key property '%s' does not exist on entity %s",
+                $key,
+                static::class
+            ));
+        }
     }
 }

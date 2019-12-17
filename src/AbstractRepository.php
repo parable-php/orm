@@ -340,7 +340,7 @@ abstract class AbstractRepository
 
     protected function createEntityFromArrayItem(array $item): AbstractEntity
     {
-        return $this->getEntityClass()::fromDatabaseItem($this->getPrimaryKey(), $item);
+        return $this->getEntityClass()::fromDatabaseItem($this->container, $this->getPrimaryKey(), $item);
     }
 
     protected function getPrimaryKeysFromEntities(array $entities): array

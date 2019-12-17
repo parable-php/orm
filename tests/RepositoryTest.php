@@ -2,12 +2,15 @@
 
 namespace Parable\Orm\Tests;
 
+use DateTimeImmutable;
 use Parable\Di\Container;
 use Parable\Orm\Database;
 use Parable\Orm\Exception;
 use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestEntityWithoutTraits;
+use Parable\Orm\Tests\Classes\TestEntityWithTypedProperties;
 use Parable\Orm\Tests\Classes\TestRepository;
+use Parable\Orm\Tests\Classes\TestRepositoryForTyped;
 use Parable\Orm\Tests\Classes\TestRepositoryWithoutPrimaryKey;
 use Parable\Query\OrderBy;
 use Parable\Query\Query;
@@ -706,7 +709,7 @@ public function testDeferSaveAllWithMultipleEntities(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "Primary key property 'id' does not exist on Entity Parable\Orm\Tests\Classes\TestEntityWithoutPrimaryKey"
+            "Primary key property 'id' does not exist on entity Parable\Orm\Tests\Classes\TestEntityWithoutPrimaryKey"
         );
 
         /** @var TestRepositoryWithoutPrimaryKey $repository */
@@ -743,5 +746,67 @@ public function testDeferSaveAllWithMultipleEntities(): void
         $user1->setPrimaryKey('id', 1);
 
         self::assertTrue($this->repository->isStored($user1));
+    }
+
+    public function testTypedEntityWithRepository(): void
+    {
+        $this->database->query("
+            CREATE TABLE types (
+              id INTEGER PRIMARY KEY,
+              date TEXT DEFAULT NULL,
+              time TEXT DEFAULT NULL,
+              datetime TEXT DEFAULT NULL,
+              updated_at TEXT DEFAULT NULL
+            );
+        ");
+
+        $repository = $this->container->build(TestRepositoryForTyped::class);
+
+        $entity = new TestEntityWithTypedProperties();
+        $entity->with(
+            1,
+            new DateTimeImmutable('2019-12-01 12:34:45'),
+            new DateTimeImmutable('2019-12-01 12:34:45'),
+            new DateTimeImmutable('2019-12-01 12:34:45')
+        );
+
+        $repository->save($entity);
+
+        /** @var TestEntityWithTypedProperties $entity_from_db */
+        $entity_from_db = $repository->find(1);
+
+        self::assertIsInt($entity_from_db->getId());
+        self::assertInstanceOf(DateTimeImmutable::class, $entity_from_db->getDate());
+        self::assertInstanceOf(DateTimeImmutable::class, $entity_from_db->getTime());
+        self::assertInstanceOf(DateTimeImmutable::class, $entity_from_db->getDatetime());
+        self::assertNull($entity_from_db->getUpdatedAt());
+
+        $entity_from_db->setDatetime(new DateTimeImmutable('2018-01-15 06:54:32'));
+
+        self::assertSame(
+            $entity_from_db->toArray(),
+            [
+                'id' => 1,
+                'date' => '2019-12-01',
+                'time' => '12:34:45',
+                'datetime' => '2018-01-15 06:54:32',
+                'updated_at' => null,
+            ]
+        );
+
+        $entity_from_db = $repository->save($entity_from_db);
+
+        self::assertInstanceOf(DateTimeImmutable::class, $entity_from_db->getUpdatedAt());
+
+        self::assertSame(
+            $entity_from_db->toArray(),
+            [
+                'id' => 1,
+                'date' => '2019-12-01',
+                'time' => '12:34:45',
+                'datetime' => '2018-01-15 06:54:32',
+                'updated_at' => $entity_from_db->getUpdatedAt()->format(Database::DATETIME_SQL),
+            ]
+        );
     }
 }
