@@ -197,7 +197,11 @@ abstract class AbstractRepository
         $this->database->query($this->getBuilder()->build($query));
 
         if ($query->getType() === Query::TYPE_INSERT) {
-            $key = $this->database->getConnection()->lastInsertId();
+            $key = PropertyTypeDeterminer::typeProperty(
+                $entity,
+                $this->getPrimaryKey(),
+                $this->database->getConnection()->lastInsertId()
+            );
 
             $entity->setPrimaryKey($this->getPrimaryKey(), $key);
             $entity->markAsOriginal();

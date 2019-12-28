@@ -1,5 +1,16 @@
 # Parable PHP ORM
 
+## 0.8.0
+
+_Changes_
+- Massive simplification. Removed `MysqlConnection` and `SqliteConnection`, simply returning `PDO` instances instead.
+- It's now possible to call `Database::setConnectionClass(string $connectionClass)` and set a custom connection class. This class _must_ extend `PDO`.
+- `Database::setType()` now accepts any `int` value, and will only throw an exception upon trying to connect.
+- Due to custom connection classes, code coverage of tests has risen to 100%. Just a nice little bonus.
+
+_Bugfixes_
+- One instance where the primary key is set was not being typed. This caused issues when, for example, a `getId(): int` would attempt to return a `string` value as set directly from the database.
+
 ## 0.7.0
 
 _Changes_

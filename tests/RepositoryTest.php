@@ -748,6 +748,33 @@ public function testDeferSaveAllWithMultipleEntities(): void
         self::assertTrue($this->repository->isStored($user1));
     }
 
+    public function testTypedEntityWorksAsExpectedAfterSave(): void
+    {
+        $this->database->query("
+            CREATE TABLE types (
+              id INTEGER PRIMARY KEY,
+              date TEXT DEFAULT NULL,
+              time TEXT DEFAULT NULL,
+              datetime TEXT DEFAULT NULL,
+              updated_at TEXT DEFAULT NULL
+            );
+        ");
+
+        $repository = $this->container->build(TestRepositoryForTyped::class);
+
+        $entity = new TestEntityWithTypedProperties();
+        $entity->with(
+            1,
+            new DateTimeImmutable('2019-12-01 12:34:45'),
+            new DateTimeImmutable('2019-12-01 12:34:45'),
+            new DateTimeImmutable('2019-12-01 12:34:45')
+        );
+
+        $entity = $repository->save($entity);
+
+        self::assertSame(1, $entity->getId());
+    }
+
     public function testTypedEntityWithRepository(): void
     {
         $this->database->query("

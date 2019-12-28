@@ -158,11 +158,6 @@ abstract class AbstractEntity
         return $setter;
     }
 
-    protected function getProperties(): array
-    {
-        return array_keys($this->toArray());
-    }
-
     protected function validatePrimaryKeyExistsOnEntity(string $key): void
     {
         if (!property_exists($this, $key)) {

@@ -244,18 +244,11 @@ class EntityTest extends \PHPUnit\Framework\TestCase
     {
         $entity = new TestEntityWithTypedProperties();
 
-        $entity->with(
-            '1',
-            '2019-12-01',
-            '12:34:45',
-            '2019-12-01 12:34:45'
-        );
-
-        $id = PropertyTypeDeterminer::typeProperty($entity, 'id', $entity->getId());
-        $date = PropertyTypeDeterminer::typeProperty($entity, 'date', $entity->getDate());
-        $time = PropertyTypeDeterminer::typeProperty($entity, 'time', $entity->getTime());
-        $datetime = PropertyTypeDeterminer::typeProperty($entity, 'datetime', $entity->getDatetime());
-        $updatedAt = PropertyTypeDeterminer::typeProperty($entity, 'datetime', $entity->getUpdatedAt());
+        $id = PropertyTypeDeterminer::typeProperty($entity, 'id', '1');
+        $date = PropertyTypeDeterminer::typeProperty($entity, 'date', '2019-12-01');
+        $time = PropertyTypeDeterminer::typeProperty($entity, 'time', '12:34:45');
+        $datetime = PropertyTypeDeterminer::typeProperty($entity, 'datetime', '2019-12-01 12:34:45');
+        $updatedAt = PropertyTypeDeterminer::typeProperty($entity, 'datetime', null);
 
         self::assertIsInt($id);
         self::assertInstanceOf(DateTimeImmutable::class, $date);

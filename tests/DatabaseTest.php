@@ -2,13 +2,36 @@
 
 namespace Parable\Orm\Tests;
 
+use DateTimeImmutable;
 use Parable\Orm\Database;
-use Parable\Orm\Database\SqliteConnection;
 use Parable\Orm\Exception;
+use Parable\Orm\Tests\Classes\ConnectionClassExtendsPDO;
+use Parable\Orm\Tests\Classes\DummyConnection;
 use PDO;
 
 class DatabaseTest extends \PHPUnit\Framework\TestCase
 {
+    public function testSetConnectionClassDoesNotLikeClassesNotExtendingPDO(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Class DateTimeImmutable does not extend PDO, which is required");
+
+        (new Database())->setConnectionClass(DateTimeImmutable::class);
+    }
+
+    public function testSetConnectionClassWorks(): void
+    {
+        $database = new Database();
+        $database->setConnectionClass(ConnectionClassExtendsPDO::class);
+
+        $database->setType(Database::TYPE_SQLITE);
+        $database->setDatabaseName(':memory:');
+        $database->connect();
+
+        self::assertInstanceOf(ConnectionClassExtendsPDO::class, $database->getConnection());
+        self::assertInstanceOf(PDO::class, $database->getConnection());
+    }
+
     public function testSetTypeWithMySQL(): void
     {
         $database = new Database();
@@ -105,14 +128,16 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $database->connect();
     }
 
-    public function testSetTypeWithInvalidType(): void
+    public function testSetTypeWithInvalidTypeThrowsOnConnect(): void
     {
-        $this->expectExceptionMessage("Invalid database type: '999'");
+        $this->expectExceptionMessage("Cannot create connection for invalid database type: '999'");
         $this->expectException(Exception::class);
 
         $database = new Database();
 
         $database->setType(999);
+
+        $database->connect();
     }
 
     public function testSetErrorModeWithInvalidValue(): void
@@ -135,8 +160,29 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
         $database->connect();
 
-        self::assertInstanceOf(SqliteConnection::class, $database->getConnection());
         self::assertInstanceOf(PDO::class, $database->getConnection());
+    }
+
+    public function testConnectWithMySQL(): void
+    {
+        $database = new Database();
+        $database->setConnectionClass(DummyConnection::class);
+        $database->setType(Database::TYPE_MYSQL);
+        $database->setHost('localhost');
+        $database->setDatabaseName('db');
+        $database->setUsername('user');
+        $database->setPassword('pw');
+        $database->setCharSet('utf8');
+
+        $database->connect();
+
+        /** @var DummyConnection $connection */
+        $connection = $database->getConnection();
+
+        self::assertInstanceOf(DummyConnection::class, $connection);
+        self::assertSame('mysql:host=localhost;port=3306;dbname=db;charset=utf8', $connection->dsn);
+        self::assertSame('user', $connection->username);
+        self::assertSame('pw', $connection->passwd);
     }
 
     public function testConnectWillNotDoAnythingIfConnectionNotNull(): void
@@ -149,13 +195,13 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
         $connection1 = $database->getConnection();
 
-        self::assertInstanceOf(SqliteConnection::class, $connection1);
+        self::assertInstanceOf(PDO::class, $connection1);
 
         $database->connect();
 
         $connection2 = $database->getConnection();
 
-        self::assertInstanceOf(SqliteConnection::class, $connection2);
+        self::assertInstanceOf(PDO::class, $connection2);
 
         self::assertSame($connection1, $connection2);
     }
@@ -170,13 +216,13 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
         $connection1 = $database->getConnection();
 
-        self::assertInstanceOf(SqliteConnection::class, $connection1);
+        self::assertInstanceOf(PDO::class, $connection1);
 
         $database->reconnect();
 
         $connection2 = $database->getConnection();
 
-        self::assertInstanceOf(SqliteConnection::class, $connection2);
+        self::assertInstanceOf(PDO::class, $connection2);
 
         self::assertNotSame($connection1, $connection2);
     }
@@ -189,7 +235,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
         $database->connect();
 
-        self::assertInstanceOf(SqliteConnection::class, $database->getConnection());
+        self::assertInstanceOf(PDO::class, $database->getConnection());
 
         $database->disconnect();
 

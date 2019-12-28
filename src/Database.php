@@ -2,8 +2,6 @@
 
 namespace Parable\Orm;
 
-use Parable\Orm\Database\MySQLConnection;
-use Parable\Orm\Database\SqliteConnection;
 use PDO;
 
 class Database
@@ -69,12 +67,24 @@ class Database
      */
     protected $lastQuery;
 
-    public function setType(int $type): void
+    /**
+     * The connection class MUST extend PDO.
+     *
+     * @var string
+     */
+    protected $connectionClass = PDO::class;
+
+    public function setConnectionClass(string $connectionClass): void
     {
-        if (!in_array($type, [self::TYPE_MYSQL, self::TYPE_SQLITE])) {
-            throw new Exception(sprintf("Invalid database type: '%d'", $type));
+        if (!is_subclass_of($connectionClass, PDO::class)) {
+            throw new Exception(sprintf("Class %s does not extend PDO, which is required", $connectionClass));
         }
 
+        $this->connectionClass = $connectionClass;
+    }
+
+    public function setType(int $type): void
+    {
         $this->type = $type;
     }
 
@@ -175,15 +185,7 @@ class Database
     {
         $this->disconnect();
 
-        switch ($this->type) {
-            case self::TYPE_MYSQL:
-                $this->connection = $this->createMySQLConnection();
-                break;
-
-            case self::TYPE_SQLITE:
-                $this->connection = $this->createSqliteConnection();
-                break;
-        }
+        $this->connection = $this->createConnectionByType($this->type);
     }
 
     public function disconnect(): void
@@ -206,7 +208,20 @@ class Database
         return $this->lastQuery;
     }
 
-    protected function createMySQLConnection(): MySQLConnection
+    protected function createConnectionByType(int $type): ?PDO
+    {
+        switch ($type) {
+            case self::TYPE_MYSQL:
+                return $this->createMySQLConnection();
+
+            case self::TYPE_SQLITE:
+                return $this->createSqliteConnection();
+        }
+
+        throw new Exception(sprintf("Cannot create connection for invalid database type: '%d'", $type));
+    }
+
+    protected function createMySQLConnection(): PDO
     {
         if ($this->host === null) {
             throw new Exception('MySQL requires a host.');
@@ -216,7 +231,7 @@ class Database
             throw new Exception('MySQL requires a database name.');
         }
 
-        $connection = new MySQLConnection(...$this->buildMySQLConnectionValues());
+        $connection = $this->createConnection(...$this->buildMySQLConnectionValues());
 
         $connection->setAttribute(PDO::ATTR_ERRMODE, $this->errorMode);
 
@@ -239,18 +254,19 @@ class Database
         return [$dsn, $this->username, $this->password];
     }
 
-    protected function createSqliteConnection(): SqliteConnection
+    protected function createSqliteConnection(): PDO
     {
         if ($this->databaseName === null) {
             throw new Exception('Sqlite requires a database.');
         }
+
         if (!is_readable($this->databaseName) && $this->databaseName !== ':memory:') {
             throw new Exception(sprintf("Could not read Sqlite database: %s", $this->databaseName));
         }
 
         $dsn = sprintf('sqlite:%s', $this->databaseName);
 
-        $connection = new SqliteConnection($dsn);
+        $connection = $this->createConnection($dsn);
 
         $connection->setAttribute(PDO::ATTR_ERRMODE, $this->errorMode);
 
@@ -276,6 +292,13 @@ class Database
         $this->lastQuery = $query;
 
         return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    protected function createConnection(...$parameters): PDO
+    {
+        $connectionClass = $this->connectionClass;
+
+        return new $connectionClass(...$parameters);
     }
 
     /**

@@ -50,7 +50,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         return null;
     }
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -60,7 +60,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         $this->id = $id;
     }
 
-    public function getDate()
+    public function getDate(): ?DateTimeImmutable
     {
         return $this->date;
     }
@@ -70,7 +70,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         $this->date = $date;
     }
 
-    public function getTime()
+    public function getTime(): ?DateTimeImmutable
     {
         return $this->time;
     }
@@ -80,7 +80,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         $this->time = $time;
     }
 
-    public function getDatetime()
+    public function getDatetime(): ?DateTimeImmutable
     {
         return $this->datetime;
     }
@@ -90,7 +90,7 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
         $this->datetime = $datetime;
     }
 
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updated_at;
     }
