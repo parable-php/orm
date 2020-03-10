@@ -1,5 +1,10 @@
 # Parable PHP ORM
 
+## 0.8.1
+
+_Changes_
+- Upgrade [`parable-php/query`](https://github.com/parable-php/query) to 0.3.1.
+
 ## 0.8.0
 
 _Changes_
