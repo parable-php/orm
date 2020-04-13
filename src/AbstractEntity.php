@@ -106,7 +106,7 @@ abstract class AbstractEntity
         $array = $this->toArray();
 
         foreach ($array as $key => $value) {
-            if (empty($value)) {
+            if (empty($value) && $value !== 0) {
                 unset($array[$key]);
             }
         }

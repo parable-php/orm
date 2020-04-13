@@ -1,5 +1,8 @@
 # Parable PHP ORM
 
+## 0.8.2
+- Fix bug in `toArrayWithoutEmptyValues()` where a value of `0` would be seen as an empty value.
+
 ## 0.8.1
 
 _Changes_
