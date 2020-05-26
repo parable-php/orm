@@ -10,26 +10,20 @@ use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestRepository;
 use Parable\Orm\ValueSetBuilder;
 use Parable\Query\Query;
+use PHPUnit\Framework\TestCase;
 
-class ValueSetBuilderTest extends \PHPUnit\Framework\TestCase
+class ValueSetBuilderTest extends TestCase
 {
-    /**
-     * @var Container
-     */
+    /** @var Container */
     protected $container;
 
-    /**
-     * @var Database
-     */
+    /** @var Database */
     protected $database;
 
-    /**
-     * @var TestRepository
-     */
+    /** @var TestRepository */
     protected $repository;
-    /**
-     * @var ValueSetBuilder
-     */
+
+    /** @var ValueSetBuilder */
     protected $valueSetBuilder;
 
     public function setUp()

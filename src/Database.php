@@ -13,58 +13,37 @@ class Database
     public const TYPE_MYSQL = 0;
     public const TYPE_SQLITE = 1;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $type;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $host;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $port = 3306;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $username;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $password;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $databaseName;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $charSet;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     protected $errorMode = PDO::ERRMODE_SILENT;
 
-    /**
-     * @var PDO|null
-     */
+    /** @var PDO|null */
     protected $connection;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $queryCount = 0;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $lastQuery;
 
     /**
@@ -275,6 +254,8 @@ class Database
 
     public function query(string $query): array
     {
+        $this->lastQuery = $query;
+
         $this->connect();
 
         $pdoStatement = $this->connection->query($query, PDO::FETCH_ASSOC);
@@ -289,7 +270,6 @@ class Database
         }
 
         $this->queryCount++;
-        $this->lastQuery = $query;
 
         return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
     }

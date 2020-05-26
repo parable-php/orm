@@ -6,12 +6,13 @@ use DateTimeImmutable;
 use Parable\Di\Container;
 use Parable\Orm\Database;
 use Parable\Orm\Exception;
-use Parable\Orm\PropertyTypeDeterminer;
+use Parable\Orm\PropertyTypes\PropertyTypeDeterminer;
 use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestEntityWithMissingSetters;
 use Parable\Orm\Tests\Classes\TestEntityWithTypedProperties;
+use PHPUnit\Framework\TestCase;
 
-class EntityTest extends \PHPUnit\Framework\TestCase
+class EntityTest extends TestCase
 {
     public function testCreateValidEntityAndToArray(): void
     {
@@ -262,7 +263,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $datetime = PropertyTypeDeterminer::untypeProperty($entity, 'datetime', $datetime);
         $updatedAt = PropertyTypeDeterminer::untypeProperty($entity, 'datetime', $updatedAt);
 
-        self::assertSame(1, $id);
+        self::assertSame('1', $id);
         self::assertSame('2019-12-01', $date);
         self::assertSame('12:34:45', $time);
         self::assertSame('2019-12-01 12:34:45', $datetime);
@@ -274,7 +275,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity = new TestEntityWithTypedProperties();
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Could not type 'bla' as TYPE_INT");
+        $this->expectExceptionMessage("Could not type 'bla' as integer");
 
         PropertyTypeDeterminer::typeProperty($entity, 'id', 'bla');
     }
@@ -284,7 +285,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity = new TestEntityWithTypedProperties();
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Could not type 'bla' as TYPE_DATE with format " . Database::DATE_SQL);
+        $this->expectExceptionMessage("Could not type 'bla' as date with format " . Database::DATE_SQL);
 
         PropertyTypeDeterminer::typeProperty($entity, 'date', 'bla');
     }
@@ -294,7 +295,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity = new TestEntityWithTypedProperties();
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Could not type 'bla' as TYPE_TIME with format " . Database::TIME_SQL);
+        $this->expectExceptionMessage("Could not type 'bla' as time with format " . Database::TIME_SQL);
 
         PropertyTypeDeterminer::typeProperty($entity, 'time', 'bla');
     }
@@ -304,7 +305,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity = new TestEntityWithTypedProperties();
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Could not type 'bla' as TYPE_DATETIME with format " . Database::DATETIME_SQL);
+        $this->expectExceptionMessage("Could not type 'bla' as datetime with format " . Database::DATETIME_SQL);
 
         PropertyTypeDeterminer::typeProperty($entity, 'datetime', 'bla');
     }
@@ -314,7 +315,7 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity = new TestEntityWithTypedProperties();
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Could not untype 'bla' as TYPE_INT");
+        $this->expectExceptionMessage("Could not untype 'bla' from integer");
 
         PropertyTypeDeterminer::untypeProperty($entity, 'id', 'bla');
     }
@@ -324,7 +325,9 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity = new TestEntityWithTypedProperties();
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Could not untype 'bla' as TYPE_DATE");
+        $this->expectExceptionMessage(
+            "Could not untype 'bla' as date from DateTimeInterface with format " . Database::DATE_SQL
+        );
 
         PropertyTypeDeterminer::untypeProperty($entity, 'date', 'bla');
     }
@@ -334,7 +337,9 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity = new TestEntityWithTypedProperties();
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Could not untype 'bla' as TYPE_TIME");
+        $this->expectExceptionMessage(
+            "Could not untype 'bla' as time from DateTimeInterface with format " . Database::TIME_SQL
+        );
 
         PropertyTypeDeterminer::untypeProperty($entity, 'time', 'bla');
     }
@@ -344,7 +349,9 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $entity = new TestEntityWithTypedProperties();
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Could not untype 'bla' as TYPE_DATETIME");
+        $this->expectExceptionMessage(
+            "Could not untype 'bla' as datetime from DateTimeInterface with format " . Database::DATETIME_SQL
+        );
 
         PropertyTypeDeterminer::untypeProperty($entity, 'datetime', 'bla');
     }

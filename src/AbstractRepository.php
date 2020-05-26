@@ -5,40 +5,29 @@ namespace Parable\Orm;
 use Parable\Di\Container;
 use Parable\Orm\Features\SupportsCreatedAt;
 use Parable\Orm\Features\SupportsUpdatedAt;
+use Parable\Orm\PropertyTypes\PropertyTypeDeterminer;
 use Parable\Query\Builder;
 use Parable\Query\OrderBy;
 use Parable\Query\Query;
 
 abstract class AbstractRepository
 {
-    /**
-     * @var Container
-     */
+    /** @var Container */
     protected $container;
 
-    /**
-     * @var Database
-     */
+    /** @var Database */
     protected $database;
 
-    /**
-     * @var ValueSetBuilder
-     */
+    /** @var ValueSetBuilder */
     protected $valueSetBuilder;
 
-    /**
-     * @var Builder
-     */
+    /** @var Builder */
     protected $builder;
 
-    /**
-     * @var AbstractEntity[]
-     */
+    /** @var AbstractEntity[] */
     protected $deferredSaveEntities = [];
 
-    /**
-     * @var AbstractEntity[]
-     */
+    /** @var AbstractEntity[] */
     protected $deferredDeleteEntities = [];
 
     public function __construct(
@@ -108,7 +97,7 @@ abstract class AbstractRepository
 
         $result = $this->database->query($this->getBuilder()->build($query));
 
-        return (int)$result[0]['COUNT(1)'] ?? 0;
+        return (int)($result[0]['COUNT(1)'] ?? 0);
     }
 
     public function find(int $id): ?AbstractEntity
@@ -183,7 +172,7 @@ abstract class AbstractRepository
 
         $result = $this->database->query($this->getBuilder()->build($query));
 
-        return (int)$result[0]['COUNT(1)'] ?? 0;
+        return (int)($result[0]['COUNT(1)'] ?? 0);
     }
 
     public function save(AbstractEntity $entity): AbstractEntity

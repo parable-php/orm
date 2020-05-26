@@ -8,8 +8,9 @@ use Parable\Orm\Exception;
 use Parable\Orm\Tests\Classes\ConnectionClassExtendsPDO;
 use Parable\Orm\Tests\Classes\DummyConnection;
 use PDO;
+use PHPUnit\Framework\TestCase;
 
-class DatabaseTest extends \PHPUnit\Framework\TestCase
+class DatabaseTest extends TestCase
 {
     public function testSetConnectionClassDoesNotLikeClassesNotExtendingPDO(): void
     {

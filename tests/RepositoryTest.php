@@ -14,28 +14,21 @@ use Parable\Orm\Tests\Classes\TestRepositoryForTyped;
 use Parable\Orm\Tests\Classes\TestRepositoryWithoutPrimaryKey;
 use Parable\Query\OrderBy;
 use Parable\Query\Query;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class RepositoryTest extends \PHPUnit\Framework\TestCase
+class RepositoryTest extends TestCase
 {
-    /**
-     * @var Container
-     */
+    /** @var Container */
     protected $container;
 
-    /**
-     * @var Database
-     */
+    /** * @var Database */
     protected $database;
 
-    /**
-     * @var TestRepository
-     */
+    /** @var TestRepository */
     protected $repository;
 
-    /**
-     * @var TestEntity
-     */
+    /** @var TestEntity */
     protected $defaultUser;
 
     public function setUp()
@@ -526,48 +519,48 @@ class RepositoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-public function testDeferSaveAllWithMultipleEntities(): void
-{
-    self::assertCount(1, $this->repository->findAll());
+    public function testDeferSaveAllWithMultipleEntities(): void
+    {
+        self::assertCount(1, $this->repository->findAll());
 
-    $user1 = new TestEntity();
-    $user2 = new TestEntity();
-    $user3 = new TestEntity();
+        $user1 = new TestEntity();
+        $user2 = new TestEntity();
+        $user3 = new TestEntity();
 
-    $user1->setName('User 1');
-    $user2->setName('User 2');
-    $user3->setName('User 3');
+        $user1->setName('User 1');
+        $user2->setName('User 2');
+        $user3->setName('User 3');
 
-    $this->repository->deferSave($user1, $user2, $user3);
+        $this->repository->deferSave($user1, $user2, $user3);
 
-    self::assertCount(1, $this->repository->findAll());
+        self::assertCount(1, $this->repository->findAll());
 
-    $this->resetQueryCount($this->database);
+        $this->resetQueryCount($this->database);
 
-    self::assertSame(0, $this->database->getQueryCount());
+        self::assertSame(0, $this->database->getQueryCount());
 
-    $this->repository->saveDeferred();
+        $this->repository->saveDeferred();
 
-    self::assertSame(1, $this->database->getQueryCount());
+        self::assertSame(1, $this->database->getQueryCount());
 
-    /** @var TestEntity[] $users */
-    self::assertCount(4, $users = $this->repository->findAll());
+        /** @var TestEntity[] $users */
+        self::assertCount(4, $users = $this->repository->findAll());
 
-    self::assertEquals(
-        $user1->getName(),
-        $users[1]->getName()
-    );
+        self::assertEquals(
+            $user1->getName(),
+            $users[1]->getName()
+        );
 
-    self::assertEquals(
-        $user2->getName(),
-        $users[2]->getName()
-    );
+        self::assertEquals(
+            $user2->getName(),
+            $users[2]->getName()
+        );
 
-    self::assertEquals(
-        $user3->getName(),
-        $users[3]->getName()
-    );
-}
+        self::assertEquals(
+            $user3->getName(),
+            $users[3]->getName()
+        );
+    }
 
     public function testSaveMultipleDeferredWorksAsExpectedWithNewAndUpdatedEntities(): void
     {
@@ -753,6 +746,7 @@ public function testDeferSaveAllWithMultipleEntities(): void
         $this->database->query("
             CREATE TABLE types (
               id INTEGER PRIMARY KEY,
+              boolean TEXT DEFAULT NULL,
               date TEXT DEFAULT NULL,
               time TEXT DEFAULT NULL,
               datetime TEXT DEFAULT NULL,
@@ -765,6 +759,7 @@ public function testDeferSaveAllWithMultipleEntities(): void
         $entity = new TestEntityWithTypedProperties();
         $entity->with(
             1,
+            false,
             new DateTimeImmutable('2019-12-01 12:34:45'),
             new DateTimeImmutable('2019-12-01 12:34:45'),
             new DateTimeImmutable('2019-12-01 12:34:45')
@@ -780,6 +775,7 @@ public function testDeferSaveAllWithMultipleEntities(): void
         $this->database->query("
             CREATE TABLE types (
               id INTEGER PRIMARY KEY,
+              boolean TEXT DEFAULT NULL,
               date TEXT DEFAULT NULL,
               time TEXT DEFAULT NULL,
               datetime TEXT DEFAULT NULL,
@@ -792,6 +788,7 @@ public function testDeferSaveAllWithMultipleEntities(): void
         $entity = new TestEntityWithTypedProperties();
         $entity->with(
             1,
+            true,
             new DateTimeImmutable('2019-12-01 12:34:45'),
             new DateTimeImmutable('2019-12-01 12:34:45'),
             new DateTimeImmutable('2019-12-01 12:34:45')
@@ -803,6 +800,7 @@ public function testDeferSaveAllWithMultipleEntities(): void
         $entity_from_db = $repository->find(1);
 
         self::assertIsInt($entity_from_db->getId());
+        self::assertIsBool($entity_from_db->getBoolean());
         self::assertInstanceOf(DateTimeImmutable::class, $entity_from_db->getDate());
         self::assertInstanceOf(DateTimeImmutable::class, $entity_from_db->getTime());
         self::assertInstanceOf(DateTimeImmutable::class, $entity_from_db->getDatetime());
@@ -813,7 +811,8 @@ public function testDeferSaveAllWithMultipleEntities(): void
         self::assertSame(
             $entity_from_db->toArray(),
             [
-                'id' => 1,
+                'id' => '1',
+                'boolean' => '1',
                 'date' => '2019-12-01',
                 'time' => '12:34:45',
                 'datetime' => '2018-01-15 06:54:32',
@@ -828,7 +827,8 @@ public function testDeferSaveAllWithMultipleEntities(): void
         self::assertSame(
             $entity_from_db->toArray(),
             [
-                'id' => 1,
+                'id' => '1',
+                'boolean' => '1',
                 'date' => '2019-12-01',
                 'time' => '12:34:45',
                 'datetime' => '2018-01-15 06:54:32',

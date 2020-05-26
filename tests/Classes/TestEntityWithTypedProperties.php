@@ -6,11 +6,16 @@ use DateTimeImmutable;
 use Parable\Orm\AbstractEntity;
 use Parable\Orm\Features\HasTypedProperties;
 use Parable\Orm\Features\SupportsUpdatedAt;
-use Parable\Orm\PropertyTypeDeterminer;
+use Parable\Orm\PropertyTypes\BooleanPropertyTyper;
+use Parable\Orm\PropertyTypes\DatePropertyTyper;
+use Parable\Orm\PropertyTypes\DateTimePropertyTyper;
+use Parable\Orm\PropertyTypes\IntegerPropertyTyper;
+use Parable\Orm\PropertyTypes\TimePropertyTyper;
 
 class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUpdatedAt, HasTypedProperties
 {
     protected $id;
+    protected $boolean;
     protected $date;
     protected $time;
     protected $datetime;
@@ -18,33 +23,38 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
 
     public function with(
         $id = null,
+        $boolean = null,
         $date = null,
         $time = null,
         $datetime = null,
         $updated_at = null
     ): void {
         $this->id = $id;
+        $this->boolean = $boolean;
         $this->date = $date;
         $this->time = $time;
         $this->datetime = $datetime;
         $this->updated_at = $updated_at;
     }
 
-    public function getPropertyType(string $property): ?int
+    public function getPropertyType(string $property): ?string
     {
         switch ($property) {
             case 'id':
-                return PropertyTypeDeterminer::TYPE_INT;
+                return IntegerPropertyTyper::class;
+
+            case 'boolean':
+                return BooleanPropertyTyper::class;
 
             case 'date':
-                return PropertyTypeDeterminer::TYPE_DATE;
+                return DatePropertyTyper::class;
 
             case 'time':
-                return PropertyTypeDeterminer::TYPE_TIME;
+                return TimePropertyTyper::class;
 
             case 'datetime':
             case 'updated_at':
-                return PropertyTypeDeterminer::TYPE_DATETIME;
+                return DateTimePropertyTyper::class;
         }
 
         return null;
@@ -58,6 +68,22 @@ class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUp
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBoolean(): bool
+    {
+        return $this->boolean;
+    }
+
+    /**
+     * @param mixed $boolean
+     */
+    public function setBoolean(bool $boolean): void
+    {
+        $this->boolean = $boolean;
     }
 
     public function getDate(): ?DateTimeImmutable

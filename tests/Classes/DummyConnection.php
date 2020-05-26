@@ -6,29 +6,19 @@ use PDO;
 
 class DummyConnection extends PDO
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $dsn;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     public $username;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     public $passwd;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     public $options;
 
-    /**
-     * @var int[]
-     */
+    /** @var int[] */
     public $attributes = [];
 
     public function __construct($dsn, $username = null, $passwd = null, $options = null)

@@ -4,5 +4,5 @@ namespace Parable\Orm\Features;
 
 interface HasTypedProperties
 {
-    public function getPropertyType(string $property): ?int;
+    public function getPropertyType(string $property): ?string;
 }

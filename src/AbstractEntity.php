@@ -3,12 +3,11 @@
 namespace Parable\Orm;
 
 use Parable\Di\Container;
+use Parable\Orm\PropertyTypes\PropertyTypeDeterminer;
 
 abstract class AbstractEntity
 {
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $originalProperties = [];
 
     public function getPrimaryKey(string $key)

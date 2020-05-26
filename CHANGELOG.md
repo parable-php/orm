@@ -1,5 +1,15 @@
 # Parable PHP ORM
 
+## 0.9.0
+
+- `Transaction` has been added. Now you can start, commit or roll back a transaction very easily. Simply call `Transaction::begin()`, `Transaction::commit()` or `Transaction::rollback()`.
+- And to make it even easier, call `Transaction::withTransaction(callable $callable)` to have it all done automatically. Exceptions thrown are rethrown, and the return value of the callable is returned by `withTransaction()`.
+- `PropertyTypeDeterminer` has been reworked, and now uses distinct `Typer` classes (such as `IntegerPropertyTyper`), implementing the `PropertyTyper` interface.
+- `BooleanPropertyTyper` has been added, which can turn `1` and `0` into `true` and `false` respectively.
+- Adding custom typers is easy, see `CustomPropertyTyper` in the tests. This way, you can transform from/to any object or value type to what the database can store, without having to care.
+- `Database::getLastQuery()` now returns the last query attempted to be performed, rather than the last successful.
+- Fixed wrong logic in `AbstractRepository::countAll()` and `AbstractRepository::countBy()` (that should not have caused issues).
+
 ## 0.8.2
 
 _Bugfixes_
