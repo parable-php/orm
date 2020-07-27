@@ -148,6 +148,20 @@ class EntityTest extends TestCase
         );
     }
 
+    public function testToArrayWithoutSees0AsNonEmpty(): void
+    {
+        $entity = new TestEntity();
+
+        $entity->setName('0');
+
+        self::assertSame(
+            [
+                'name' => '0',
+            ],
+            $entity->toArrayWithoutEmptyValues()
+        );
+    }
+
     public function testCreateValidEntityAndToArrayWithoutEmptyValues(): void
     {
         $entity = new TestEntity();

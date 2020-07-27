@@ -105,7 +105,8 @@ abstract class AbstractEntity
         $array = $this->toArray();
 
         foreach ($array as $key => $value) {
-            if (empty($value) && $value !== 0) {
+            // We don't want values 0 or '0' to be seen as empty, so we ctype_digit it
+            if (empty($value) && !ctype_digit($value)) {
                 unset($array[$key]);
             }
         }

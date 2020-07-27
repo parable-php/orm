@@ -1,5 +1,9 @@
 # Parable PHP ORM
 
+## 0.9.1
+
+- When using typed properties and trying to set a value of '0', untyping it caused it to become a string value. This would end up being seen as an 'empty' value and removed from the value set.
+
 ## 0.9.0
 
 - `Transaction` has been added. Now you can start, commit or roll back a transaction very easily. Simply call `Transaction::begin()`, `Transaction::commit()` or `Transaction::rollback()`.
