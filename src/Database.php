@@ -206,10 +206,6 @@ class Database
             throw new Exception('MySQL requires a host.');
         }
 
-        if ($this->databaseName === null) {
-            throw new Exception('MySQL requires a database name.');
-        }
-
         $connection = $this->createConnection(...$this->buildMySQLConnectionValues());
 
         $connection->setAttribute(PDO::ATTR_ERRMODE, $this->errorMode);

@@ -68,10 +68,15 @@ class DatabaseTest extends TestCase
 
     public function testSetTypeWithMySQLWithoutDatabase(): void
     {
-        $this->expectExceptionMessage('MySQL requires a database name.');
+        $this->expectExceptionMessage('mysql:host=host;port=3306;dbname=');
         $this->expectException(Exception::class);
 
-        $database = new Database();
+        $database = new class extends Database {
+            protected function createConnection(...$parameters): PDO
+            {
+                throw new Exception($parameters[0]);
+            }
+        };
 
         $database->setType(Database::TYPE_MYSQL);
         $database->setHost('host');

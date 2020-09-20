@@ -1,5 +1,9 @@
 # Parable PHP ORM
 
+## 0.9.2
+
+- MySQL no longer requires a database name to establish a connection.
+
 ## 0.9.1
 
 - When using typed properties and trying to set a value of '0', untyping it caused it to become a string value. This would end up being seen as an 'empty' value and removed from the value set.
