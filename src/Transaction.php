@@ -6,15 +6,11 @@ use Throwable;
 
 class Transaction
 {
-    /** @var Database */
-    private $database;
+    protected bool $inTransaction = false;
 
-    /** @var bool */
-    private $inTransaction = false;
-
-    public function __construct(Database $database)
-    {
-        $this->database = $database;
+    public function __construct(
+        protected Database $database
+    ) {
     }
 
     public function isInTransaction(): bool

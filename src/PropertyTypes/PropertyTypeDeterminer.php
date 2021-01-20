@@ -37,7 +37,7 @@ class PropertyTypeDeterminer
         return $transformer->untype($value);
     }
 
-    private static function getTransformerFromEntity(AbstractEntity $entity, string $property): ?PropertyTyper
+    protected static function getTransformerFromEntity(AbstractEntity $entity, string $property): ?PropertyTyper
     {
         if (!($entity instanceof HasTypedProperties)) {
             return null;

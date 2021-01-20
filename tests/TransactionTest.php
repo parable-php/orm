@@ -17,7 +17,7 @@ class TransactionTest extends TestCase
     /** @var Transaction */
     private $transaction;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

@@ -84,7 +84,7 @@ class EntityTest extends TestCase
             "Property 'bloop' does not exist on entity Parable\Orm\Tests\Classes\TestEntity"
         );
 
-        TestEntity::fromDatabaseItem(new Container(), 'id', ['id' => 123, 'bloop' => 'what']);
+        TestEntity::fromDatabaseItem(new Container(), 'id', ['id' => '123', 'bloop' => 'what']);
     }
 
     public function testFromDatabaseItemBreaksOnMissingSetters(): void

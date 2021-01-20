@@ -14,20 +14,20 @@ use Parable\Orm\PropertyTypes\TimePropertyTyper;
 
 class TestEntityWithTypedProperties extends AbstractEntity implements SupportsUpdatedAt, HasTypedProperties
 {
-    protected $id;
-    protected $boolean;
-    protected $date;
-    protected $time;
-    protected $datetime;
-    protected $updated_at;
+    protected mixed $id;
+    protected mixed $boolean;
+    protected mixed $date;
+    protected mixed $time;
+    protected mixed $datetime;
+    protected mixed $updated_at = null;
 
     public function with(
-        $id = null,
-        $boolean = null,
-        $date = null,
-        $time = null,
-        $datetime = null,
-        $updated_at = null
+        mixed $id = null,
+        mixed $boolean = null,
+        mixed $date = null,
+        mixed $time = null,
+        mixed $datetime = null,
+        mixed $updated_at = null
     ): void {
         $this->id = $id;
         $this->boolean = $boolean;

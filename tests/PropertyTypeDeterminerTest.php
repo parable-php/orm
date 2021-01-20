@@ -17,11 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 class PropertyTypeDeterminerTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testIntegerTyperWorksAsExpected(): void
     {
         $entity = $this->createEntityWithSpecificTyper(IntegerPropertyTyper::class);
@@ -147,8 +142,7 @@ class PropertyTypeDeterminerTest extends TestCase
     private function createEntityWithSpecificTyper(string $typerClass): AbstractEntity
     {
         return new class ($typerClass) extends AbstractEntity implements HasTypedProperties {
-            /** @var string */
-            private $typerClass;
+            private string $typerClass;
 
             public function __construct(string $typerClass)
             {

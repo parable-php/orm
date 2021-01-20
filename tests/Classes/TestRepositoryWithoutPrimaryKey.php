@@ -20,5 +20,4 @@ class TestRepositoryWithoutPrimaryKey extends AbstractRepository
     {
         return TestEntityWithoutPrimaryKey::class;
     }
-
 }

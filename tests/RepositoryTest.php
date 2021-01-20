@@ -19,19 +19,12 @@ use stdClass;
 
 class RepositoryTest extends TestCase
 {
-    /** @var Container */
-    protected $container;
+    protected Container $container;
+    protected Database $database;
+    protected TestRepository $repository;
+    protected TestEntity $defaultUser;
 
-    /** * @var Database */
-    protected $database;
-
-    /** @var TestRepository */
-    protected $repository;
-
-    /** @var TestEntity */
-    protected $defaultUser;
-
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -305,7 +298,7 @@ class RepositoryTest extends TestCase
         $this->repository->save($user);
 
         /** @var TestEntity[] $users */
-        $users = $this->repository->findBy(function (Query $query) {
+        $users = $this->repository->findBy(static function (Query $query) {
             $query->where('name', '=', 'First Custom User');
         });
 
@@ -328,9 +321,12 @@ class RepositoryTest extends TestCase
         $this->repository->saveAll($user1, $user2);
 
         /** @var TestEntity[] $users */
-        $users = $this->repository->findBy(function (Query $query) {
-            $query->where('name', 'LIKE', '%Custom%');
-        }, OrderBy::desc('id'));
+        $users = $this->repository->findBy(
+            static function (Query $query) {
+                $query->where('name', 'LIKE', '%Custom%');
+            },
+            OrderBy::desc('id')
+        );
 
         self::assertCount(2, $users);
 
@@ -343,7 +339,7 @@ class RepositoryTest extends TestCase
     public function testFindUniqueByReturnsNullIfNoneFound(): void
     {
         /** @var TestEntity[] $users */
-        $user = $this->repository->findUniqueBy(function (Query $query) {
+        $user = $this->repository->findUniqueBy(static function (Query $query) {
             $query->where('name', '=', 'Unique name');
         });
 
@@ -358,7 +354,7 @@ class RepositoryTest extends TestCase
         $this->repository->save($user);
 
         /** @var TestEntity $user */
-        $user = $this->repository->findUniqueBy(function (Query $query) {
+        $user = $this->repository->findUniqueBy(static function (Query $query) {
             $query->where('name', '=', 'Unique name');
         });
 
@@ -368,8 +364,8 @@ class RepositoryTest extends TestCase
 
     public function testFindUniqueByThrowsOnMoreThanOneResult(): void
     {
-        self::expectException(Exception::class);
-        self::expectExceptionMessage("Found more than one of");
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Found more than one of");
 
         $user1 = new TestEntity();
         $user1->setName('Unique name');
@@ -416,7 +412,7 @@ class RepositoryTest extends TestCase
 
         $this->repository->save($user);
 
-        self::assertContains('INSERT INTO `users`', $this->database->getLastQuery());
+        self::assertStringContainsString('INSERT INTO `users`', $this->database->getLastQuery());
 
         self::assertCount(2, $users = $this->repository->findAll());
 
@@ -434,7 +430,7 @@ class RepositoryTest extends TestCase
         $this->defaultUser->setName('Updated Default User');
         $this->repository->save($this->defaultUser);
 
-        self::assertContains('UPDATE `users`', $this->database->getLastQuery());
+        self::assertStringContainsString('UPDATE `users`', $this->database->getLastQuery());
 
         self::assertCount(1, $users = $this->repository->findAll());
     }
@@ -449,10 +445,10 @@ class RepositoryTest extends TestCase
         $queryParts = explode('WHERE', $lastQuery);
         $queryWithoutWhere = reset($queryParts);
 
-        self::assertContains('`updated_at` =', $queryWithoutWhere);
-        self::assertNotContains('`id` =', $queryWithoutWhere);
-        self::assertNotContains('`name` =', $queryWithoutWhere);
-        self::assertNotContains('`created_at` =', $queryWithoutWhere);
+        self::assertStringContainsString('`updated_at` =', $queryWithoutWhere);
+        self::assertStringNotContainsString('`id` =', $queryWithoutWhere);
+        self::assertStringNotContainsString('`name` =', $queryWithoutWhere);
+        self::assertStringNotContainsString('`created_at` =', $queryWithoutWhere);
 
         self::assertCount(1, $users = $this->repository->findAll());
     }

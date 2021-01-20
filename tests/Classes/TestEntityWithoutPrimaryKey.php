@@ -9,23 +9,15 @@ use Parable\Orm\Features\SupportsUpdatedAt;
 
 class TestEntityWithoutPrimaryKey extends AbstractEntity implements SupportsCreatedAt, SupportsUpdatedAt
 {
-    protected $name;
-    protected $created_at;
-    protected $updated_at;
-
     /**
      * This constructor isn't necessary but for testing purposes
      * it's handy to be able to create a specific entity.
      */
     public function __construct(
-        string $name = null,
-        string $created_at = null,
-        string $updated_at = null
+        protected ?string $name = null,
+        protected ?string $created_at = null,
+        protected ?string $updated_at = null
     ) {
-        $this->name = $name;
-        $this->created_at = $created_at;
-        $this->updated_at = $updated_at;
-
         $this->originalProperties = $this->toArray();
     }
 

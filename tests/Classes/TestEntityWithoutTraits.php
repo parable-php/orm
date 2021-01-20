@@ -6,22 +6,17 @@ use Parable\Orm\AbstractEntity;
 
 class TestEntityWithoutTraits extends AbstractEntity
 {
-    protected $id;
-    protected $name;
-    protected $created_at;
-    protected $updated_at;
+    protected ?string $created_at;
+    protected ?string $updated_at;
 
     /**
      * This constructor isn't necessary but for testing purposes
      * it's handy to be able to create a specific entity.
      */
     public function __construct(
-        int $id = null,
-        string $name = null
+        protected mixed $id = null,
+        protected ?string $name = null
     ) {
-        $this->id = $id;
-        $this->name = $name;
-
         $this->originalProperties = $this->toArray();
     }
 

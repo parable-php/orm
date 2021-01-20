@@ -26,7 +26,7 @@ class ValueSetBuilderTest extends TestCase
     /** @var ValueSetBuilder */
     protected $valueSetBuilder;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

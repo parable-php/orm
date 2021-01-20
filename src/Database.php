@@ -13,50 +13,30 @@ class Database
     public const TYPE_MYSQL = 0;
     public const TYPE_SQLITE = 1;
 
-    /** @var int|null */
-    protected $type;
-
-    /** @var string|null */
-    protected $host;
-
-    /** @var int */
-    protected $port = 3306;
-
-    /** @var string|null */
-    protected $username;
-
-    /** @var string|null */
-    protected $password;
-
-    /** @var string|null */
-    protected $databaseName;
-
-    /** @var string|null */
-    protected $charSet;
-
-    /** @var int */
-    protected $errorMode = PDO::ERRMODE_SILENT;
-
-    /** @var PDO|null */
-    protected $connection;
-
-    /** @var int */
-    protected $queryCount = 0;
-
-    /** @var string|null */
-    protected $lastQuery;
+    protected ?int $type = null;
+    protected ?string $host = null;
+    protected int $port = 3306;
+    protected ?string $username = null;
+    protected ?string $password = null;
+    protected ?string $databaseName = null;
+    protected ?string $charSet = null;
+    protected int $errorMode = PDO::ERRMODE_SILENT;
+    protected ?PDO $connection = null;
+    protected int $queryCount = 0;
+    protected ?string $lastQuery;
 
     /**
-     * The connection class MUST extend PDO.
-     *
-     * @var string
+     * The connection class MUST extend PDO if not PDO itself
      */
-    protected $connectionClass = PDO::class;
+    protected string $connectionClass = PDO::class;
 
     public function setConnectionClass(string $connectionClass): void
     {
         if (!is_subclass_of($connectionClass, PDO::class)) {
-            throw new Exception(sprintf("Class %s does not extend PDO, which is required", $connectionClass));
+            throw new Exception(sprintf(
+                "Class %s does not extend PDO, which is required",
+                $connectionClass
+            ));
         }
 
         $this->connectionClass = $connectionClass;
@@ -134,7 +114,11 @@ class Database
 
     public function setErrorMode(int $errorMode): void
     {
-        if (!in_array($errorMode, [PDO::ERRMODE_SILENT, PDO::ERRMODE_WARNING, PDO::ERRMODE_EXCEPTION])) {
+        if (!in_array(
+            $errorMode,
+            [PDO::ERRMODE_SILENT, PDO::ERRMODE_WARNING, PDO::ERRMODE_EXCEPTION],
+            true
+        )) {
             throw new Exception(sprintf("Invalid error mode set: '%d'", $errorMode));
         }
 
@@ -235,7 +219,7 @@ class Database
             throw new Exception('Sqlite requires a database.');
         }
 
-        if (!is_readable($this->databaseName) && $this->databaseName !== ':memory:') {
+        if ($this->databaseName !== ':memory:' && !is_readable($this->databaseName)) {
             throw new Exception(sprintf("Could not read Sqlite database: %s", $this->databaseName));
         }
 
@@ -284,7 +268,7 @@ class Database
      *
      * @see \Parable\Orm\Tests\DatabaseTest::testDebugInfoCannotPreventVarExport
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $clone = clone $this;
 

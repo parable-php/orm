@@ -7,8 +7,11 @@ use Parable\Query\ValueSet;
 
 class ValueSetBuilder
 {
-    public function build(AbstractRepository $repository, Query $query, AbstractEntity $entity): ValueSet
-    {
+    public function build(
+        AbstractRepository $repository,
+        Query $query,
+        AbstractEntity $entity
+    ): ValueSet {
         switch ($query->getType()) {
             case Query::TYPE_UPDATE:
                 return $this->buildValueSetForUpdate($repository, $entity);

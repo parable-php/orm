@@ -8,7 +8,7 @@ use Parable\Orm\PropertyTypes\PropertyTypeDeterminer;
 abstract class AbstractEntity
 {
     /** @var string[] */
-    protected $originalProperties = [];
+    protected array $originalProperties = [];
 
     public function getPrimaryKey(string $key)
     {
@@ -136,7 +136,7 @@ abstract class AbstractEntity
 
     protected function getSetterForProperty(string $property): string
     {
-        if (strpos($property, '_') !== false) {
+        if (str_contains($property, '_')) {
             $setter = 'set';
 
             $propertyParts = explode('_', $property);

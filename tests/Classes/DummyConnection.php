@@ -6,20 +6,13 @@ use PDO;
 
 class DummyConnection extends PDO
 {
-    /** @var string */
-    public $dsn;
-
-    /** @var string|null */
-    public $username;
-
-    /** @var string|null */
-    public $passwd;
-
-    /** @var string|null */
-    public $options;
+    public string $dsn;
+    public ?string $username;
+    public ?string $passwd;
+    public ?string $options;
 
     /** @var int[] */
-    public $attributes = [];
+    public array $attributes = [];
 
     public function __construct($dsn, $username = null, $passwd = null, $options = null)
     {
@@ -29,8 +22,10 @@ class DummyConnection extends PDO
         $this->options = $options;
     }
 
-    public function setAttribute($attribute, $value)
+    public function setAttribute($attribute, $value): bool
     {
         $this->attributes[$attribute] = $value;
+
+        return true;
     }
 }

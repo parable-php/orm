@@ -12,42 +12,26 @@ use Parable\Query\Query;
 
 abstract class AbstractRepository
 {
-    /** @var Container */
-    protected $container;
-
-    /** @var Database */
-    protected $database;
-
-    /** @var ValueSetBuilder */
-    protected $valueSetBuilder;
-
-    /** @var Builder */
-    protected $builder;
+    protected ?Builder $builder = null;
 
     /** @var AbstractEntity[] */
-    protected $deferredSaveEntities = [];
+    protected array $deferredSaveEntities = [];
 
     /** @var AbstractEntity[] */
-    protected $deferredDeleteEntities = [];
+    protected array $deferredDeleteEntities = [];
 
     public function __construct(
-        Container $container,
-        Database $database,
-        ValueSetBuilder $valueSetBuilder
+        protected Container $container,
+        protected Database $database,
+        protected ValueSetBuilder $valueSetBuilder
     ) {
-        $this->container = $container;
-        $this->database = $database;
-        $this->valueSetBuilder = $valueSetBuilder;
     }
 
     abstract public function getTableName(): string;
 
     abstract public function getPrimaryKey(): string;
 
-    /**
-     * @return string|AbstractEntity
-     */
-    abstract public function getEntityClass(): string;
+    abstract public function getEntityClass(): string|AbstractEntity;
 
     public function createEntityClass(): AbstractEntity
     {

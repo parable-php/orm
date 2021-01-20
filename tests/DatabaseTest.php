@@ -293,8 +293,8 @@ class DatabaseTest extends TestCase
         $database->setType(Database::TYPE_MYSQL);
         $database->setPassword('test_password');
 
-        self::assertNotContains('test_password', print_r($database, true));
-        self::assertContains('****** (masked)', print_r($database, true));
+        self::assertStringNotContainsString('test_password', print_r($database, true));
+        self::assertStringContainsString('****** (masked)', print_r($database, true));
     }
 
     /**
@@ -315,7 +315,7 @@ class DatabaseTest extends TestCase
 
         $varexportedContent = ob_get_clean();
 
-        self::assertContains('test_password', $varexportedContent);
-        self::assertNotContains('****** (masked)', $varexportedContent);
+        self::assertStringContainsString('test_password', $varexportedContent);
+        self::assertStringNotContainsString('****** (masked)', $varexportedContent);
     }
 }
