@@ -1,5 +1,10 @@
 # Parable PHP ORM
 
+## 0.10.0
+
+_Changes_
+- Dropped support for php7, php8 only from now on.
+
 ## 0.9.2
 
 - MySQL no longer requires a database name to establish a connection.
