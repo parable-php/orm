@@ -1,6 +1,6 @@
 # Parable ORM
 
-[![Build Status](https://travis-ci.com/parable-php/orm.svg?branch=master)](https://travis-ci.com/parable-php/orm)
+[![Workflow Status](https://github.com/parable-php/orm/workflows/Tests/badge.svg)](https://github.com/parable-php/orm/actions?query=workflow%3ATests)
 [![Latest Stable Version](https://poser.pugx.org/parable-php/orm/v/stable)](https://packagist.org/packages/parable-php/orm)
 [![Latest Unstable Version](https://poser.pugx.org/parable-php/orm/v/unstable)](https://packagist.org/packages/parable-php/orm)
 [![License](https://poser.pugx.org/parable-php/orm/license)](https://packagist.org/packages/parable-php/orm)
