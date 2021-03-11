@@ -33,7 +33,7 @@ class Database
     public function setConnectionClass(string $connectionClass): void
     {
         if (!is_subclass_of($connectionClass, PDO::class)) {
-            throw new Exception(sprintf(
+            throw new OrmException(sprintf(
                 "Class %s does not extend PDO, which is required",
                 $connectionClass
             ));
@@ -119,7 +119,7 @@ class Database
             [PDO::ERRMODE_SILENT, PDO::ERRMODE_WARNING, PDO::ERRMODE_EXCEPTION],
             true
         )) {
-            throw new Exception(sprintf("Invalid error mode set: '%d'", $errorMode));
+            throw new OrmException(sprintf("Invalid error mode set: '%d'", $errorMode));
         }
 
         $this->errorMode = $errorMode;
@@ -181,13 +181,13 @@ class Database
                 return $this->createSqliteConnection();
         }
 
-        throw new Exception(sprintf("Cannot create connection for invalid database type: '%d'", $type));
+        throw new OrmException(sprintf("Cannot create connection for invalid database type: '%d'", $type));
     }
 
     protected function createMySQLConnection(): PDO
     {
         if ($this->host === null) {
-            throw new Exception('MySQL requires a host.');
+            throw new OrmException('MySQL requires a host.');
         }
 
         $connection = $this->createConnection(...$this->buildMySQLConnectionValues());
@@ -216,11 +216,11 @@ class Database
     protected function createSqliteConnection(): PDO
     {
         if ($this->databaseName === null) {
-            throw new Exception('Sqlite requires a database.');
+            throw new OrmException('Sqlite requires a database.');
         }
 
         if ($this->databaseName !== ':memory:' && !is_readable($this->databaseName)) {
-            throw new Exception(sprintf("Could not read Sqlite database: %s", $this->databaseName));
+            throw new OrmException(sprintf("Could not read Sqlite database: %s", $this->databaseName));
         }
 
         $dsn = sprintf('sqlite:%s', $this->databaseName);
@@ -241,7 +241,7 @@ class Database
         $pdoStatement = $this->connection->query($query, PDO::FETCH_ASSOC);
 
         if (!$pdoStatement) {
-            throw new Exception(sprintf(
+            throw new OrmException(sprintf(
                 "Could not perform query: '%s', reason: %s: '%s'",
                 $query,
                 $this->connection->errorCode() ?? 'unknown',

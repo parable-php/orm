@@ -4,7 +4,7 @@ namespace Parable\Orm\Tests;
 
 use DateTimeImmutable;
 use Parable\Orm\Database;
-use Parable\Orm\Exception;
+use Parable\Orm\OrmException;
 use Parable\Orm\Tests\Classes\ConnectionClassExtendsPDO;
 use Parable\Orm\Tests\Classes\DummyConnection;
 use PDO;
@@ -14,7 +14,7 @@ class DatabaseTest extends TestCase
 {
     public function testSetConnectionClassDoesNotLikeClassesNotExtendingPDO(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Class DateTimeImmutable does not extend PDO, which is required");
 
         (new Database())->setConnectionClass(DateTimeImmutable::class);
@@ -45,7 +45,7 @@ class DatabaseTest extends TestCase
     public function testSetTypeWithSqlite(): void
     {
         $this->expectExceptionMessage('Sqlite requires a database.');
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
 
         $database = new Database();
 
@@ -57,7 +57,7 @@ class DatabaseTest extends TestCase
     public function testSetTypeWithMySQLWithoutHost(): void
     {
         $this->expectExceptionMessage('MySQL requires a host.');
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
 
         $database = new Database();
 
@@ -69,12 +69,12 @@ class DatabaseTest extends TestCase
     public function testSetTypeWithMySQLWithoutDatabase(): void
     {
         $this->expectExceptionMessage('mysql:host=host;port=3306;dbname=');
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
 
         $database = new class extends Database {
             protected function createConnection(...$parameters): PDO
             {
-                throw new Exception($parameters[0]);
+                throw new OrmException($parameters[0]);
             }
         };
 
@@ -122,7 +122,7 @@ class DatabaseTest extends TestCase
 
     public function testSqliteWithInvalidDatabase(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not read Sqlite database: database.sqlite");
 
         $database = new Database();
@@ -137,7 +137,7 @@ class DatabaseTest extends TestCase
     public function testSetTypeWithInvalidTypeThrowsOnConnect(): void
     {
         $this->expectExceptionMessage("Cannot create connection for invalid database type: '999'");
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
 
         $database = new Database();
 
@@ -149,7 +149,7 @@ class DatabaseTest extends TestCase
     public function testSetErrorModeWithInvalidValue(): void
     {
         $this->expectExceptionMessage("Invalid error mode set: '999'");
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
 
         $database = new Database();
 
@@ -274,7 +274,7 @@ class DatabaseTest extends TestCase
 
     public function testQueryThrowsOnInvalidQuery(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not perform query: '1', reason: HY000: 'near \"1\": syntax error'");
 
         $database = new Database();

@@ -21,7 +21,7 @@ class Transaction
     public function begin(): void
     {
         if ($this->inTransaction === true) {
-            throw new Exception('Cannot start a transaction within a transaction');
+            throw new OrmException('Cannot start a transaction within a transaction');
         }
 
         if ($this->database->getType() === Database::TYPE_MYSQL) {
@@ -29,7 +29,7 @@ class Transaction
         } elseif ($this->database->getType() === Database::TYPE_SQLITE) {
             $this->database->query('BEGIN TRANSACTION');
         } else {
-            throw new Exception('Cannot start transaction for database type ' . $this->database->getType());
+            throw new OrmException('Cannot start transaction for database type ' . $this->database->getType());
         }
 
         $this->inTransaction = true;
@@ -38,7 +38,7 @@ class Transaction
     public function commit(): void
     {
         if ($this->inTransaction === false) {
-            throw new Exception('Cannot commit while not in a transaction');
+            throw new OrmException('Cannot commit while not in a transaction');
         }
 
         $this->database->query('COMMIT');
@@ -49,7 +49,7 @@ class Transaction
     public function rollback(): void
     {
         if ($this->inTransaction === false) {
-            throw new Exception('Cannot rollback while not in a transaction');
+            throw new OrmException('Cannot rollback while not in a transaction');
         }
 
         $this->database->query('ROLLBACK');
@@ -66,7 +66,7 @@ class Transaction
         } catch (Throwable $exception) {
             $this->rollback();
 
-            throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
+            throw new OrmException($exception->getMessage(), (int)$exception->getCode(), $exception);
         }
 
         $this->commit();

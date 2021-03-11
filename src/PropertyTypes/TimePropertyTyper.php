@@ -5,7 +5,7 @@ namespace Parable\Orm\PropertyTypes;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Parable\Orm\Database;
-use Parable\Orm\Exception;
+use Parable\Orm\OrmException;
 
 class TimePropertyTyper implements PropertyTyper
 {
@@ -14,7 +14,7 @@ class TimePropertyTyper implements PropertyTyper
         $time = DateTimeImmutable::createFromFormat(Database::TIME_SQL, $value);
 
         if ($time === false) {
-            throw new Exception(sprintf(
+            throw new OrmException(sprintf(
                 "Could not type '%s' as time with format %s",
                 $value,
                 Database::TIME_SQL
@@ -27,7 +27,7 @@ class TimePropertyTyper implements PropertyTyper
     public function untype($value): string
     {
         if (!($value instanceof DateTimeInterface)) {
-            throw new Exception(sprintf(
+            throw new OrmException(sprintf(
                 "Could not untype '%s' as time from DateTimeInterface with format %s",
                 $value,
                 Database::TIME_SQL

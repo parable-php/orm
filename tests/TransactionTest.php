@@ -4,7 +4,7 @@ namespace Parable\Orm\Tests;
 
 use LogicException;
 use Parable\Orm\Database;
-use Parable\Orm\Exception;
+use Parable\Orm\OrmException;
 use Parable\Orm\Transaction;
 use PHPUnit\Framework\TestCase;
 use Throwable;
@@ -55,7 +55,7 @@ class TransactionTest extends TestCase
 
         try {
             $transaction->begin();
-        } catch (Exception $exception) {
+        } catch (OrmException $exception) {
             // All good, we expect this
         }
 
@@ -67,7 +67,7 @@ class TransactionTest extends TestCase
 
     public function testExceptionThrownWhenInvalidDatabaseTypeIsPassed(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage('Cannot start transaction for database type 5656');
 
         $database = new Database();
@@ -131,7 +131,7 @@ class TransactionTest extends TestCase
             $this->transaction->withTransaction(function () {
                 $this->createUser();
 
-                throw new Exception('Nope');
+                throw new OrmException('Nope');
             });
 
             self::fail('Throwing exception should have halted withTransaction');
@@ -144,7 +144,7 @@ class TransactionTest extends TestCase
 
     public function testWithTransactionReThrowsException(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage('Nope');
 
         $this->transaction->withTransaction(function () {
@@ -163,7 +163,7 @@ class TransactionTest extends TestCase
 
     public function testNestedTransactionsAreExplicitlyDisallowed(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage('Cannot start a transaction within a transaction');
 
         $this->transaction->begin();
@@ -172,7 +172,7 @@ class TransactionTest extends TestCase
 
     public function testNestedTransactionsAreExplicitlyDisallowedThroughWithTransaction(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage('Cannot start a transaction within a transaction');
 
         $this->transaction->withTransaction(function () {
@@ -184,7 +184,7 @@ class TransactionTest extends TestCase
 
     public function testCannotCommitWithoutActiveTransaction(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage('Cannot commit while not in a transaction');
 
         $this->transaction->commit();
@@ -192,7 +192,7 @@ class TransactionTest extends TestCase
 
     public function testCannotRollbackWithoutActiveTransaction(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage('Cannot rollback while not in a transaction');
 
         $this->transaction->rollback();

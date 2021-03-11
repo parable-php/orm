@@ -38,13 +38,13 @@ abstract class AbstractRepository
         $entityClass = $this->getEntityClass();
 
         if (!class_exists($entityClass)) {
-            throw new Exception(sprintf("Traits class '%s' does not exist.", $entityClass));
+            throw new OrmException(sprintf("Traits class '%s' does not exist.", $entityClass));
         }
 
         $entity = $this->container->build($this->getEntityClass());
 
         if (!($entity instanceof AbstractEntity)) {
-            throw new Exception(sprintf("Class '%s' does not extend AbstractEntity.", $entityClass));
+            throw new OrmException(sprintf("Class '%s' does not extend AbstractEntity.", $entityClass));
         }
 
         return $entity;
@@ -106,7 +106,7 @@ abstract class AbstractRepository
         $entities = $this->findBy($callable);
 
         if (count($entities) > 1) {
-            throw new Exception(sprintf(
+            throw new OrmException(sprintf(
                 "Found more than one of '%s'",
                 $this->getEntityClass()
             ));
@@ -269,7 +269,7 @@ abstract class AbstractRepository
     protected function getBuilder(): Builder
     {
         if (!$this->database->isConnected()) {
-            throw new Exception('Cannot use repository methods without database connection.');
+            throw new OrmException('Cannot use repository methods without database connection.');
         }
 
         if ($this->builder === null) {
@@ -328,7 +328,7 @@ abstract class AbstractRepository
             $this->validateEntityCorrectClass($entity);
 
             if (!$this->isStored($entity)) {
-                throw new Exception('Cannot delete entity that is not stored.');
+                throw new OrmException('Cannot delete entity that is not stored.');
             }
 
             $primaryKeys[] = $entity->getPrimaryKey($this->getPrimaryKey());
@@ -351,7 +351,7 @@ abstract class AbstractRepository
             return;
         }
 
-        throw new Exception(sprintf(
+        throw new OrmException(sprintf(
             "Expected '%s', got '%s' instead. Cannot handle these classes.",
             $entityClass,
             get_class($entity)

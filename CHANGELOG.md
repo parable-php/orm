@@ -1,5 +1,9 @@
 # Parable PHP ORM
 
+## 0.11.0
+- Added static analysis through psalm.
+- Renamed `Exception` to `OrmException` for clarity.
+
 ## 0.10.0
 
 _Changes_

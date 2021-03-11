@@ -34,7 +34,7 @@ abstract class AbstractEntity
         $entity->validatePrimaryKeyExistsOnEntity($primaryKey);
 
         if (!isset($values[$primaryKey])) {
-            throw new Exception(sprintf(
+            throw new OrmException(sprintf(
                 "Could not set primary key '%s' on entity %s from database values",
                 $primaryKey,
                 static::class
@@ -47,7 +47,7 @@ abstract class AbstractEntity
 
         foreach ($values as $property => $value) {
             if (!property_exists($entity, $property)) {
-                throw new Exception(sprintf(
+                throw new OrmException(sprintf(
                     "Property '%s' does not exist on entity %s",
                     $property,
                     static::class
@@ -148,7 +148,7 @@ abstract class AbstractEntity
         }
 
         if (!method_exists($this, $setter)) {
-            throw new Exception(sprintf(
+            throw new OrmException(sprintf(
                 "Setter method '%s' not defined on entity %s",
                 $setter,
                 static::class
@@ -161,7 +161,7 @@ abstract class AbstractEntity
     protected function validatePrimaryKeyExistsOnEntity(string $key): void
     {
         if (!property_exists($this, $key)) {
-            throw new Exception(sprintf(
+            throw new OrmException(sprintf(
                 "Primary key property '%s' does not exist on entity %s",
                 $key,
                 static::class

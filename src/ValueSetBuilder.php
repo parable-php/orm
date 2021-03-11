@@ -19,7 +19,7 @@ class ValueSetBuilder
                 return $this->buildValueSetForInsert($repository, $entity);
         }
 
-        throw new Exception(sprintf('Cannot build value set for Query of type %s', $query->getType()));
+        throw new OrmException(sprintf('Cannot build value set for Query of type %s', $query->getType()));
     }
 
     protected function buildValueSetForUpdate(

@@ -5,7 +5,7 @@ namespace Parable\Orm\Tests;
 use DateTimeImmutable;
 use Parable\Di\Container;
 use Parable\Orm\Database;
-use Parable\Orm\Exception;
+use Parable\Orm\OrmException;
 use Parable\Orm\PropertyTypes\PropertyTypeDeterminer;
 use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestEntityWithMissingSetters;
@@ -69,7 +69,7 @@ class EntityTest extends TestCase
 
     public function testFromDatabaseItemBreaksIfIdOmitted(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage(
             "Could not set primary key 'id' on entity Parable\Orm\Tests\Classes\TestEntity from database values"
         );
@@ -79,7 +79,7 @@ class EntityTest extends TestCase
 
     public function testFromDatabaseItemBreaksIfInvalidValuePassed(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage(
             "Property 'bloop' does not exist on entity Parable\Orm\Tests\Classes\TestEntity"
         );
@@ -89,7 +89,7 @@ class EntityTest extends TestCase
 
     public function testFromDatabaseItemBreaksOnMissingSetters(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage(
             "Setter method 'setName' not defined on entity Parable\Orm\Tests\Classes\TestEntityWithMissingSetters"
         );
@@ -113,7 +113,7 @@ class EntityTest extends TestCase
 
     public function testGetPrimaryKeyThrowsOnInvalidKey(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage(
             "Primary key property 'bloop' does not exist on entity Parable\Orm\Tests\Classes\TestEntity"
         );
@@ -288,7 +288,7 @@ class EntityTest extends TestCase
     {
         $entity = new TestEntityWithTypedProperties();
 
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not type 'bla' as integer");
 
         PropertyTypeDeterminer::typeProperty($entity, 'id', 'bla');
@@ -298,7 +298,7 @@ class EntityTest extends TestCase
     {
         $entity = new TestEntityWithTypedProperties();
 
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not type 'bla' as date with format " . Database::DATE_SQL);
 
         PropertyTypeDeterminer::typeProperty($entity, 'date', 'bla');
@@ -308,7 +308,7 @@ class EntityTest extends TestCase
     {
         $entity = new TestEntityWithTypedProperties();
 
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not type 'bla' as time with format " . Database::TIME_SQL);
 
         PropertyTypeDeterminer::typeProperty($entity, 'time', 'bla');
@@ -318,7 +318,7 @@ class EntityTest extends TestCase
     {
         $entity = new TestEntityWithTypedProperties();
 
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not type 'bla' as datetime with format " . Database::DATETIME_SQL);
 
         PropertyTypeDeterminer::typeProperty($entity, 'datetime', 'bla');
@@ -328,7 +328,7 @@ class EntityTest extends TestCase
     {
         $entity = new TestEntityWithTypedProperties();
 
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not untype 'bla' from integer");
 
         PropertyTypeDeterminer::untypeProperty($entity, 'id', 'bla');
@@ -338,7 +338,7 @@ class EntityTest extends TestCase
     {
         $entity = new TestEntityWithTypedProperties();
 
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage(
             "Could not untype 'bla' as date from DateTimeInterface with format " . Database::DATE_SQL
         );
@@ -350,7 +350,7 @@ class EntityTest extends TestCase
     {
         $entity = new TestEntityWithTypedProperties();
 
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage(
             "Could not untype 'bla' as time from DateTimeInterface with format " . Database::TIME_SQL
         );
@@ -362,7 +362,7 @@ class EntityTest extends TestCase
     {
         $entity = new TestEntityWithTypedProperties();
 
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage(
             "Could not untype 'bla' as datetime from DateTimeInterface with format " . Database::DATETIME_SQL
         );

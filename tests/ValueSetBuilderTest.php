@@ -5,7 +5,7 @@ namespace Parable\Orm\Tests;
 use DateTimeImmutable;
 use Parable\Di\Container;
 use Parable\Orm\Database;
-use Parable\Orm\Exception;
+use Parable\Orm\OrmException;
 use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestRepository;
 use Parable\Orm\ValueSetBuilder;
@@ -130,7 +130,7 @@ class ValueSetBuilderTest extends TestCase
 
     public function testNonUpdateOrInsertQueryBreaks(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage('Cannot build value set for Query of type SELECT');
 
         $query = Query::select($this->repository->getTableName());

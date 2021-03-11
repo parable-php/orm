@@ -4,7 +4,7 @@ namespace Parable\Orm\Tests;
 
 use DateTimeImmutable;
 use Parable\Orm\AbstractEntity;
-use Parable\Orm\Exception;
+use Parable\Orm\OrmException;
 use Parable\Orm\Features\HasTypedProperties;
 use Parable\Orm\PropertyTypes\BooleanPropertyTyper;
 use Parable\Orm\PropertyTypes\DatePropertyTyper;
@@ -32,7 +32,7 @@ class PropertyTypeDeterminerTest extends TestCase
 
     public function testIntegerTyperThrowsOnTypingInvalidValue(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not type 'blabla' as integer");
 
         $entity = $this->createEntityWithSpecificTyper(IntegerPropertyTyper::class);
@@ -42,7 +42,7 @@ class PropertyTypeDeterminerTest extends TestCase
 
     public function testIntegerTyperThrowsOnUntypingInvalidValue(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not untype 'blabla' from integer");
 
         $entity = $this->createEntityWithSpecificTyper(IntegerPropertyTyper::class);
@@ -69,7 +69,7 @@ class PropertyTypeDeterminerTest extends TestCase
 
     public function testBooleanTyperThrowsOnTypingInvalidValue(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not type 'blabla' as boolean");
 
         $entity = $this->createEntityWithSpecificTyper(BooleanPropertyTyper::class);
@@ -79,7 +79,7 @@ class PropertyTypeDeterminerTest extends TestCase
 
     public function testBooleanTyperThrowsOnUntypingInvalidValue(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Could not untype 'blabla' from boolean");
 
         $entity = $this->createEntityWithSpecificTyper(BooleanPropertyTyper::class);

@@ -5,7 +5,7 @@ namespace Parable\Orm\Tests;
 use DateTimeImmutable;
 use Parable\Di\Container;
 use Parable\Orm\Database;
-use Parable\Orm\Exception;
+use Parable\Orm\OrmException;
 use Parable\Orm\Tests\Classes\TestEntity;
 use Parable\Orm\Tests\Classes\TestEntityWithoutTraits;
 use Parable\Orm\Tests\Classes\TestEntityWithTypedProperties;
@@ -80,7 +80,7 @@ class RepositoryTest extends TestCase
 
     public function testCreateRepositorySuccessfulWithoutDatabaseButFailsOnPerformingAnything(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Cannot use repository methods without database connection.");
 
         $container = new Container();
@@ -108,7 +108,7 @@ class RepositoryTest extends TestCase
 
     public function testCreateEntityClassThrowsOnInvalidClassName(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Traits class 'noooope' does not exist.");
 
         $repo = new class (...$this->container->getDependenciesFor(TestRepository::class)) extends TestRepository {
@@ -123,7 +123,7 @@ class RepositoryTest extends TestCase
 
     public function testCreateEntityClassThrowsOnClassThatDoesNotExtendAbstractEntity(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Class 'stdClass' does not extend AbstractEntity.");
 
         $repo = new class (...$this->container->getDependenciesFor(TestRepository::class)) extends TestRepository {
@@ -364,7 +364,7 @@ class RepositoryTest extends TestCase
 
     public function testFindUniqueByThrowsOnMoreThanOneResult(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage("Found more than one of");
 
         $user1 = new TestEntity();
@@ -641,7 +641,7 @@ class RepositoryTest extends TestCase
 
     public function testDeleteUnsavedEntitiesFails(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage('Cannot delete entity that is not stored.');
 
         $user = new TestEntity();
@@ -651,7 +651,7 @@ class RepositoryTest extends TestCase
 
     public function testDeleteUnknownEntitiesFails(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage(
             "Expected 'Parable\Orm\Tests\Classes\TestEntity', got 'Parable\Orm\Tests\Classes\TestEntityWithoutTraits'"
             . ' instead. Cannot handle these classes.'
@@ -696,7 +696,7 @@ class RepositoryTest extends TestCase
 
     public function testNoPrimaryKeyThrowsAnException(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(OrmException::class);
         $this->expectExceptionMessage(
             "Primary key property 'id' does not exist on entity Parable\Orm\Tests\Classes\TestEntityWithoutPrimaryKey"
         );

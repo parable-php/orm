@@ -2,6 +2,6 @@
 
 namespace Parable\Orm;
 
-class Exception extends \Exception
+class OrmException extends \Exception
 {
 }
