@@ -1,5 +1,9 @@
 # Parable PHP ORM
 
+## 0.11.1
+
+- Upgrade `parable-php/query` to 0.5.0.
+
 ## 0.11.0
 - Added static analysis through psalm.
 - Renamed `Exception` to `OrmException` for clarity.
