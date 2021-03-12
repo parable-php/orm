@@ -19,7 +19,7 @@ $ composer require parable-php/orm
 
 Repositories are used to find, save and delete entities, which represent rows from your MySQL/Sqlite database. Parable ORM attempts to combine queries to be as efficient as possible.
 
-Entities are relatively straight-forward PHP data objects, and are expected to offer setters and gettings for all values associated with that entity. Example:
+Entities are relatively straight-forward PHP data objects, and are expected to offer setters and getters for all values associated with that entity. Example:
 
 ```php
 class Entity extends AbstractEntity {
