@@ -180,6 +180,56 @@ $repository->deleteDeferred(); // Actually perform it.
 
 For both deferred saves and deletes, the currently stored entities to be saved or deleted can be cleared by calling either `clearDeferredSaves()` or `clearDeferredDeletes()`.
 
+#### How to connect to a database
+
+You didn't think I'd ever forget this, do you? 2 database types are currently supported, MySQL and Sqlite3.
+
+To connect to a MySQL server:
+
+```php
+$database = new Database(
+    Database::TYPE_MYSQL, 
+    'parable',
+    'localhost',
+    'username',
+    'password'
+);
+```
+
+Or:
+
+```php
+$database = new Database();
+$database->setDatabaseName('parable');
+$database->setHost('localhost');
+$database->setUsername('username');
+$database->setPassword('password');
+
+$database->connect();
+
+$results = $database->query('SELECT * FROM users');
+```
+
+And to connect to a Sqlite3 file:
+
+```php
+$database = new Database(
+    Database::TYPE_SQLITE, 
+    'storage/parable.db'
+);
+```
+
+Or:
+
+```php
+$database = new Database();
+$database->setDatabaseName('storage/parable.db');
+
+$database->connect();
+
+$results = $database->query('SELECT * FROM users');
+```
+
 ## Contributing
 
 Any suggestions, bug reports or general feedback is welcome. Use github issues and pull requests, or find me over at [devvoh.com](https://devvoh.com).

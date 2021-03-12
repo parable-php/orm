@@ -9,26 +9,28 @@ class Database
     public const DATE_SQL = 'Y-m-d';
     public const TIME_SQL = 'H:i:s';
     public const DATETIME_SQL = self::DATE_SQL . ' ' . self::TIME_SQL;
-
     public const TYPE_MYSQL = 0;
     public const TYPE_SQLITE = 1;
 
-    protected ?int $type = null;
-    protected ?string $host = null;
-    protected int $port = 3306;
-    protected ?string $username = null;
-    protected ?string $password = null;
-    protected ?string $databaseName = null;
-    protected ?string $charSet = null;
-    protected int $errorMode = PDO::ERRMODE_SILENT;
     protected ?PDO $connection = null;
     protected int $queryCount = 0;
     protected ?string $lastQuery;
 
     /**
-     * The connection class MUST extend PDO if not PDO itself
+     * The connection class MUST extend PDO or a class that extends PDO
      */
     protected string $connectionClass = PDO::class;
+
+    public function __construct(
+        protected ?int $type = null,
+        protected ?string $databaseName = null,
+        protected ?string $host = null,
+        protected ?string $username = null,
+        protected ?string $password = null,
+        protected int $port = 3306,
+        protected ?string $charSet = null,
+        protected int $errorMode = PDO::ERRMODE_SILENT
+    ) {}
 
     public function setConnectionClass(string $connectionClass): void
     {

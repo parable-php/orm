@@ -1,5 +1,14 @@
 # Parable PHP ORM
 
+## 1.0.0
+
+Version 1.0.0 is here!
+
+_Changes_
+- Upgraded `parable-php/di` and `parable-php/query` to 1.0.0 as well.
+- `Database` now accepts constructor values for quicker setup. See `Database::__construct()` or check the README.
+- `README` updated to show how to actually connect to a database :facepalm:
+
 ## 0.11.1
 
 - Upgrade `parable-php/query` to 0.5.0.
